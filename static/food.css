@@ -11,17 +11,19 @@
 }
 
 .produce-container, .produce-category-container, select {
-    background-color: rgb(190, 250, 190) !important;
+    background-color: rgb(191, 255, 191) !important;
     border: 0px solid black !important;
 }
 
 select {
-    background-color: rgb(131, 217, 131) !important;
+    background-color: rgb(128, 237, 128) !important;
     height: fit-content;
+    z-index: 1;
+    overflow: hidden;
 }
 
 .produce-header {
-    background-color: rgb(145, 243, 145);
+    background-color: rgb(117, 255, 117);
 }
 
 .food-quantity, .produce-quantity {
@@ -38,13 +40,22 @@ select {
     display: block;
     color: #0a7e0a;
     text-align: right;
-    line-height: .3;
+}
+
+.produce-quantities {
+    line-height: .7;
+    width: 25%;
 }
 
 li {
     position: relative;
 }
 
-select {
-    overflow: hidden;
+.max-choices {
+    font-size: 12pt;
+    font-weight: normal;
+}
+
+.produce-category {
+    padding-left: 10px;
 }

@@ -120,7 +120,9 @@ def signup(request):
         )
         user.save()
         user = authenticate(username=user.email, password=password)
-        auth_login(request, user)
+        return redirect(reverse('disclaimer'))
+
+        #auth_login(request, user)
         
     request.doctors = Doctor.objects.all()
     return render(request, 'signup.html')
@@ -156,10 +158,7 @@ def questionnaire(request):
             logging.error("jerere")
 
             if val == '1':
-                user = request.user
-                user = authenticate(username=user.email, password=password)
-
-                auth_login(request, user)
+          
                 return redirect(reverse('home'))
 
                 

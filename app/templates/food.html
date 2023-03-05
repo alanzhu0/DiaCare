@@ -17,8 +17,10 @@
                 .attr("size", $('.select-{{ category.id }} option').length)
                 .next()
                 .css("position", "relative")
-                .css("left", "75vw")
-                .css("bottom", $('.select-{{ category.id }}').next().height() + 5);
+                .css("left", "70%")
+                .css("bottom", $('.select-{{ category.id }}').next().height())
+                .parent()
+                .css("margin-bottom", $('.select-{{ category.id }}').next().height() * -1);
             {% endfor %}
          });
     </script>
@@ -29,6 +31,7 @@
 <br>
 <div class="container">
     <form method="post" action="{% url 'food' %}">
+        {% csrf_token %}
         <div class="form-group">
             <div class="foods-container">
                 <h4 class="foods-header">
@@ -56,8 +59,11 @@
                 </h4>
                 {% for category in produce_categories %}
                     <div class="produce-category-container">
-                        <h5 class="produce-category">{{ category.name }}</h5>
-                        <span>Choose up to {{ category.maximum_choices }} items.</span>
+                        <h5 class="produce-category">
+                            {{ category.name }}
+                            <br>
+                            <i class="max-choices">Choose up to {{ category.maximum_choices }} items.</i>
+                        </h5>
                         <select multiple class="form-control select-{{ category.id }}">
                             {% for produce in category.produces %}
                                 <option>
@@ -74,18 +80,9 @@
                     </div>
                 {% endfor %}
             </div>
-            {% comment %} <label for="exampleFormControlSelect2">Example multiple select</label>
-            <select multiple class="form-control" id="exampleFormControlSelect2">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            </select> {% endcomment %}
         </div>
         <div class="form-group">
-            <label for="exampleFormControlTextarea1">Example textarea</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            <button type="submit" class="btn btn-primary">Order</button>
         </div>
     </form>
 </div>
