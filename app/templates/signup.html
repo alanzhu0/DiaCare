@@ -74,12 +74,18 @@
                     <input type="doctor" id="doctor" name="doctor" class="form-control form-control-lg" placeholder="Doctor Name" />
                   </div> -->
 
-                  <h6 class="mb-0 me-4">Select a doctor: </h6>
+                  <h6 class="mb-0 me-4">Select your doctor: </h6>
                   <select name="doctor" id="doctor">
                   {% for doctor in request.doctors %}
-                    <option  name="doctor" value="{{ doctor.id }}"> {{ doctor.name }} <br>
+                    <option  name="doctor" value="{{ doctor.id }}"> {{ doctor }} <br>
                   {% endfor %}
-
+                  </select>
+                  <br><br>
+                  <h6 class="mb-0 me-4">Select your dietician: </h6>
+                  <select name="dietician" id="dietician">
+                    {% for dietician in request.dieticians %}
+                      <option name="dietician" value="{{ dietician.id }}"> {{ dietician }} <br>
+                    {% endfor %}
                   </select>
 
 

@@ -90,5 +90,11 @@
                 </div>
             </div>
         </div>
+    {% empty %}
+    <div class="row">
+        <h5 style="position: relative; top: 15px; text-align: center">
+            No orders yet!
+        </h5>
+    </div>
     {% endfor %}
 {% endblock %}

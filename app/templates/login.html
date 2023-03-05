@@ -26,6 +26,12 @@
                 {{ error }}
             </div>
         {% endif %}
+        {% if message %}
+            <br><br>
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endif %}
         </div>
     </form>
 {% endblock %}

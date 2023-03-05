@@ -122,6 +122,7 @@ def signup(request):
         try:
             user = User.objects.get(email=email)
             request.doctors = Doctor.objects.all()
+            request.dieticians = Dietician.objects.all()
 
             return render(request, 'signup.html', {'error': 'User already exists.'})
         except User.DoesNotExist:
@@ -134,15 +135,19 @@ def signup(request):
             gender=request.POST.get('gender'),
             address=request.POST.get('address'),
             doctor=Doctor.objects.get(id=request.POST.get('doctor')),
+            dietician=Dietician.objects.get(id=request.POST.get('dietician')),
             password=make_password(password),
         )
         user.save()
-        user = authenticate(username=user.email, password=password)
+        
+        request.user = user
         return redirect(reverse('disclaimer'))
 
         #auth_login(request, user)
 
     request.doctors = Doctor.objects.all()
+    request.dieticians = Dietician.objects.all()
+    
     return render(request, 'signup.html')
 
 
@@ -166,23 +171,11 @@ def questionnaire(request):
         return redirect(reverse('home'))
     if request.method == 'POST':
         for thing in request.POST.dict().keys():
-
             val = request.POST.dict().get(thing)
 
-            print(thing)
-            logging.error(request.POST)
-
-            logging.error(request.POST.dict().keys())
-            logging.error("thing: " + thing)
-            logging.error("val: " + val)
-            logging.error("jerere")
-
             if val == '1':
-
-                return redirect(reverse('home'))
+                return render(request, 'login.html', {'message': 'You are eligible for DiaCare! Please sign in with the account you created to continue.'})
         request.doctors = Doctor.objects.all()
 
         return render(request, 'signup.html', {'error': 'You do not qualify for the program.'})
-
-        return redirect(reverse('home'))
     return render(request, 'questionnaire.html')

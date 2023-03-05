@@ -16,6 +16,16 @@
 
 {% block body %}
 <table class="table infotable">
+    <tr style="height: 75px; background-color: #87fa87;">
+        <td>
+            <a href="{% url 'orders' %}" class="btn" style="border-radius: 0">
+                <h5 style="position: relative; top: 15px;">
+                    <span style="position: relative; left: 75%; bottom: 10px">View Orders</span>
+                    <span class="material-symbols-outlined" style="position: relative; bottom: 5px; left: 135%">arrow_circle_right</span>
+                </h5>
+            </a>
+        </td>
+    </tr>
     <tr class="tr-header">
         <td>
             <span class="material-symbols-outlined header-icon">info</span> 
