@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 def base_layout(request):
-	template='app/base.html'
-	return render(request,template)
+    template = 'app/base.html'
+    return render(request, template)
 
 
 def index(request):
@@ -32,7 +32,7 @@ def index(request):
 @login_required
 def home(request):
     context = {
-        
+
     }
     return render(request, 'home.html', context)
 
@@ -42,22 +42,38 @@ def food(request):
     if request.method == 'POST':
         user = request.user
         order = Order.objects.create(user=user)
-        produces = request.POST.get('produce')
+                
+        order.type = request.POST.get('type')
+        order.date_scheduled = request.POST.get('date')
         
         # Create Food objects
         for food in FoodChoice.objects.filter(active=True):
-            Food.objects.create(order=order, food=food) 
-            
+            Food.objects.create(order=order, food=food)
+
         # Create Produce objects
-        for produce_id in produces:
-            produce = get_object_or_404(ProduceChoice, id=produce_id)
-            Produce.objects.create(order=order, produce=produce)
+        for category in ProduceCategory.objects.all():
+            produce_list = request.POST.getlist(f"category-{category.id}")
+            
+            if len(produce_list) > category.maximum_choices:
+                return render(request, 'food.html', {
+                    "foods": FoodChoice.objects.filter(active=True),
+                    "produce_categories": ProduceCategory.objects.all(),
+                    "error": f"Too many produce choices selected for {category.name}."
+                })
+            
+            for produce_id in produce_list:
+                try:
+                    produce_id = int(produce_id)
+                    produce_choice = ProduceChoice.objects.get(id=produce_id)
+                    Produce.objects.create(order=order, produce=produce_choice)
+                except (ValueError, ProduceChoice.DoesNotExist):
+                    continue
+        order.save()
         return redirect(reverse('orders'))
-    
+
     return render(request, 'food.html', {
         "foods": FoodChoice.objects.filter(active=True),
         "produce_categories": ProduceCategory.objects.all(),
-        "produces": ProduceChoice.objects.filter(active=True),
     })
 
 
@@ -84,7 +100,7 @@ def login(request):
             auth_login(request, user)
             return redirect(reverse('home'))
         return render(request, 'login.html', {'error': 'Invalid credentials.'})
-    
+
     return render(request, 'login.html')
 
 
@@ -95,6 +111,7 @@ def logout(request):
 
 
 def signup(request):
+
     if request.user.is_authenticated:
         return redirect(reverse('disclaimer'))
 
@@ -104,26 +121,27 @@ def signup(request):
 
         try:
             user = User.objects.get(email=email)
+            request.doctors = Doctor.objects.all()
+
             return render(request, 'signup.html', {'error': 'User already exists.'})
         except User.DoesNotExist:
             pass
 
         user = User.objects.create(
-            email=email, 
-            first_name=request.POST.get('first_name'), 
-            last_name=request.POST.get('last_name'), 
+            email=email,
+            first_name=request.POST.get('first_name'),
+            last_name=request.POST.get('last_name'),
             gender=request.POST.get('gender'),
             address=request.POST.get('address'),
-            doctor =  Doctor.objects.get(id=request.POST.get('doctor')),
+            doctor=Doctor.objects.get(id=request.POST.get('doctor')),
             password=make_password(password),
-
         )
         user.save()
         user = authenticate(username=user.email, password=password)
         return redirect(reverse('disclaimer'))
 
         #auth_login(request, user)
-        
+
     request.doctors = Doctor.objects.all()
     return render(request, 'signup.html')
 
@@ -134,6 +152,8 @@ def disclaimer(request):
     if request.method == 'POST':
         disclaimerval = request.POST.get('disclaimerval')
         if disclaimerval == 'no':
+            request.doctors = Doctor.objects.all()
+
             return render(request, 'signup.html', {'error': 'Please accept the disclaimer to sign up.'})
         else:
             return redirect(reverse('questionnaire'))
@@ -148,7 +168,7 @@ def questionnaire(request):
         for thing in request.POST.dict().keys():
 
             val = request.POST.dict().get(thing)
-            
+
             print(thing)
             logging.error(request.POST)
 
@@ -158,11 +178,10 @@ def questionnaire(request):
             logging.error("jerere")
 
             if val == '1':
-          
-                return redirect(reverse('home'))
 
-                
-           
+                return redirect(reverse('home'))
+        request.doctors = Doctor.objects.all()
+
         return render(request, 'signup.html', {'error': 'You do not qualify for the program.'})
 
         return redirect(reverse('home'))
