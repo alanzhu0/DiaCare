@@ -11,22 +11,7 @@ from django.utils import timezone
 
 from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
 
-
-import logging
-
-logger = logging.getLogger('scope.name')
-
-file_log_handler = logging.FileHandler('logfile.log')
-logger.addHandler(file_log_handler)
-
-stderr_log_handler = logging.StreamHandler()
-logger.addHandler(stderr_log_handler)
-logging.debug('This is a debug message')
-logging.info('This is an info message')
-logging.warning('This is a warning message')
-logging.error('This is an error message')
-logging.critical('This is a critical message')
-logger.debug('This is a debug message')
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -58,8 +43,13 @@ def food(request):
         for produce_id in produces:
             produce = get_object_or_404(ProduceChoice, id=produce_id)
             Produce.objects.create(order=order, produce=produce)
-        
-    return render(request, 'food.html')
+        return redirect(reverse('orders'))
+    
+    return render(request, 'food.html', {
+        "foods": FoodChoice.objects.filter(active=True),
+        "produce_categories": ProduceCategory.objects.all(),
+        "produces": ProduceChoice.objects.filter(active=True),
+    })
 
 
 @login_required
@@ -115,14 +105,15 @@ def signup(request):
             last_name=request.POST.get('last_name'), 
             gender=request.POST.get('gender'),
             address=request.POST.get('address'),
+            doctor =  Doctor.objects.get(id=request.POST.get('doctor')),
             password=make_password(password),
+
         )
         user.save()
         user = authenticate(username=user.email, password=password)
-        #auth_login(request, user)
-        request.user = user
-
-        return redirect(reverse('disclaimer'))
+        auth_login(request, user)
+        
+    request.doctors = Doctor.objects.all()
     return render(request, 'signup.html')
 
 
@@ -135,9 +126,6 @@ def disclaimer(request):
             return render(request, 'signup.html', {'error': 'Please accept the disclaimer to sign up.'})
         else:
             return redirect(reverse('questionnaire'))
-    
-    
-    
     return render(request, 'disclaimer.html')
 
 
@@ -160,6 +148,8 @@ def questionnaire(request):
 
             if val == '1':
                 user = request.user
+                user = authenticate(username=user.email, password=password)
+
                 auth_login(request, user)
                 return redirect(reverse('home'))
 

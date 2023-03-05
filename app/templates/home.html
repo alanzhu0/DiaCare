@@ -28,8 +28,12 @@
             <br>
             {{ request.user.doctor }}
             <a href="mailto:{{ request.user.doctor.email }}" class="right-link">
-                Contact&nbsp;
+                Email&nbsp;
                 <span class="material-symbols-outlined mail-symbol">mail</span>
+            </a>
+            <a href="tel:{{ request.user.doctor.phone }}" class="right-link">
+                Phone:&nbsp;
+                <span class="material-symbols-outlined mail-symbol">phone</span>
             </a>
         </td>
     </tr>
@@ -39,8 +43,12 @@
             <br>
             {{ request.user.dietician }}
             <a href="mailto:{{ request.user.dietician.email }}" class="right-link">
-                Contact&nbsp;
+                Email&nbsp;
                 <span class="material-symbols-outlined mail-symbol">mail</span> 
+            </a>
+            <a href="tel:{{ request.user.dietician.phone }}" class="right-link">
+                Phone:&nbsp;
+                <span class="material-symbols-outlined mail-symbol">phone</span>
             </a>
         </td>
     </tr>

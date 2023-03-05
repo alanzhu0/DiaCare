@@ -90,6 +90,10 @@ class ProduceCategory(models.Model):
         help_text="Maximum number of produce choices allowed in this category"
     )
     
+    @property
+    def produces(self):
+        return ProduceChoice.objects.filter(category=self)
+    
     def __str__(self):
         return self.name
     

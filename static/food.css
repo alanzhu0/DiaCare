@@ -1,14 +1,37 @@
-.foodtable {
-    width: 100%;
-    height: 100%;
-    border: 1px solid black;
-    border-collapse: collapse;
-    align: center;
-    text-align: center;
+.foods-container, .foods-header, .produce-container, .produce-header {
+    background-color: #FFEDCA;
+    border-radius: 5px;
+    padding-bottom: 1px;
 }
-.foodtable td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    align: center;
-    text-align: center;
+
+.foods-header, .produce-header {
+    background-color: #f9d483;
+    padding: 10px; 
+    border-radius: 5px 5px 0 0;
+}
+
+.produce-container, select {
+    background-color: rgb(167, 246, 167) !important;
+    border: 0px solid black !important;
+}
+
+.produce-header {
+    background-color: rgb(85, 230, 85);
+}
+
+.food-quantity, .produce-quantity {
+    color: #a4720e;
+    font-size: 9pt;
+    font-weight: bold;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+}
+
+.produce-quantity {
+    color: #0a7e0a;
+}
+
+li {
+    position: relative;
 }

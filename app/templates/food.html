@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    DiaCare - Request Food
+    DiaCare - Order Food
 {% endblock %}
 
 {% block css %}
@@ -10,8 +10,60 @@
 {% endblock %}
 
 {% block body %}
-
-
-
-
+<br>
+<div class="container">
+    <form method="post" action="{% url 'food' %}">
+        <div class="form-group">
+            <div class="foods-container">
+                <h4 class="foods-header">
+                    Food
+                    <br>
+                    <small style="font-weight: normal; font-size: 12pt">These foods will come with every order.</small>
+                </h4>
+                <ul>
+                {% for food in foods %}
+                    <li>
+                        {{ food.name }}
+                        <span class="food-quantity">{{ food.quantity }}</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <div class="produce-container">
+                <h4 class="produce-header">
+                    Produce
+                    <br>
+                    <small style="font-weight: normal; font-size: 12pt">Choose the produce you wish to order.</small>
+                </h4>
+                {% for category in produce_categories %}
+                    <h5 class="produce-category">{{ category.name }}</h5>
+                    <span>Choose up to {{ category.maximum_choices }} items.</span>
+                    <select multiple class="form-control">
+                    {% for produce in category.produces %}
+                        <option>
+                            {{ produce.name }}
+                            <span class="produce-quantity">{{ produce.quantity }}</span>
+                        </option>
+                    {% endfor %}
+                    </select>
+                {% endfor %}
+            </div>
+            {% comment %} <label for="exampleFormControlSelect2">Example multiple select</label>
+            <select multiple class="form-control" id="exampleFormControlSelect2">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            </select> {% endcomment %}
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Example textarea</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+    </form>
+</div>
 {% endblock %}
