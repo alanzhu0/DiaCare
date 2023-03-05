@@ -9,6 +9,22 @@
     <link rel="stylesheet" href="{% static 'food.css' %}">
 {% endblock %}
 
+{% block js %}
+    <script>
+        $(function () {
+            {% for category in produce_categories %}
+                $('.select-{{ category.id }}')
+                .attr("size", $('.select-{{ category.id }} option').length)
+                .next()
+                .css("position", "relative")
+                .css("left", "75vw")
+                .css("bottom", $('.select-{{ category.id }}').next().height() + 5);
+            {% endfor %}
+         });
+    </script>
+{% endblock %}
+
+
 {% block body %}
 <br>
 <div class="container">
@@ -39,16 +55,23 @@
                     <small style="font-weight: normal; font-size: 12pt">Choose the produce you wish to order.</small>
                 </h4>
                 {% for category in produce_categories %}
-                    <h5 class="produce-category">{{ category.name }}</h5>
-                    <span>Choose up to {{ category.maximum_choices }} items.</span>
-                    <select multiple class="form-control">
-                    {% for produce in category.produces %}
-                        <option>
-                            {{ produce.name }}
-                            <span class="produce-quantity">{{ produce.quantity }}</span>
-                        </option>
-                    {% endfor %}
-                    </select>
+                    <div class="produce-category-container">
+                        <h5 class="produce-category">{{ category.name }}</h5>
+                        <span>Choose up to {{ category.maximum_choices }} items.</span>
+                        <select multiple class="form-control select-{{ category.id }}">
+                            {% for produce in category.produces %}
+                                <option>
+                                    {{ produce.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="produce-quantities">
+                            {% for produce in category.produces %}
+                                <span class="produce-quantity">{{ produce.quantity }}</span>
+                                <br>
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
             {% comment %} <label for="exampleFormControlSelect2">Example multiple select</label>

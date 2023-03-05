@@ -12,5 +12,5 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     
     path('disclaimer/', views.disclaimer, name='disclaimer'),
-    path('questionnaire/', views.questionnaire, name='questionnaire')
+    path('questionnaire/', views.questionnaire, name='questionnaire'),
 ]

@@ -8,10 +8,19 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.shortcuts import render
+from django.core import serializers
+from . models import feed
+import json
 
 from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
 
 logger = logging.getLogger(__name__)
+
+
+def base_layout(request):
+	template='app/base.html'
+	return render(request,template)
 
 
 def index(request):

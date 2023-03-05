@@ -1,3 +1,4 @@
+{% load pwa %}
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -12,6 +13,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
 
         <link rel="stylesheet" href="{% static 'base.css' %}">
+        {% progressive_web_app_meta %}
         {% block css %}
         {% endblock %}
      </head>
