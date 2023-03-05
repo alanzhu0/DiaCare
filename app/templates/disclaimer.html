@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+  <link href="{% static 'disclaimer.css' %}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+  {% block nav %}{% endblock %}
+        <div id="box">
+            <h1>Disclaimer</h1>
+            <p> Note: DiaCare will use the following information to improve our understanding of our patients. By filling out this form, you are consenting to the use of your personal data by DiaCare. </p>
+
+            <form id="acceptance" action="{% url 'disclaimer' %}" method="post">
+              {% csrf_token %}
+
+              <h6 class="mb-0 me-4">Do you accept? </h6>
+  
+              <select name="disclaimerval" id="disclaimerval" >
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+
+
+
+              <button id="agree" type="submit"> Submit </button>
+            </form>
+        
+        </div>
+
+{% endblock %}

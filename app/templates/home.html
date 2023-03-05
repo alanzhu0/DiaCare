@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    DiaCare - Home
+{% endblock %}
+
+{% block css %}
+    <link href="{% static 'home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'home.js' %}"></script>
+{% endblock %}
+
+
+{% block body %}
+<table class="table infotable">
+    <tr class="tr-header">
+        <td>
+            <span class="material-symbols-outlined header-icon">info</span> 
+            DiaCare Information
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Doctor:</b>             
+            <br>
+            {{ request.user.doctor }}
+            <a href="mailto:{{ request.user.doctor.email }}" class="right-link">
+                Contact&nbsp;
+                <span class="material-symbols-outlined mail-symbol">mail</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Dietician:</b> 
+            <br>
+            {{ request.user.dietician }}
+            <a href="mailto:{{ request.user.dietician.email }}" class="right-link">
+                Contact&nbsp;
+                <span class="material-symbols-outlined mail-symbol">mail</span> 
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Last clinic visit:</b>
+            <br>
+            {{ request.user.last_clinic_visit }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Last food received:</b> 
+            <br>
+            {{ request.user.last_food_received }}
+        </td>
+    </tr>
+
+
+    <tr class="tr-header">
+        <td>
+            <span class="material-symbols-outlined header-icon">calendar_month</span> 
+            Scheduled Visits
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Next clinic visit:</b>
+            <br>
+            {{ request.user.next_clinic_visit }}
+            <a href="" class="right-link">
+                Schedule&nbsp;
+                <span class="material-symbols-outlined mail-symbol">schedule</span> 
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>Next food batch:</b> 
+            <br>
+            {{ request.user.next_food_batch }}
+            <a href="" class="right-link">
+                Schedule&nbsp;
+                <span class="material-symbols-outlined mail-symbol">schedule</span> 
+            </a>
+        </td>
+    </tr>
+
+    <tr class="tr-header foodbanks-header">
+        <td>
+            <span class="material-symbols-outlined header-icon">location_on</span> 
+            Nearby Foodbanks
+        </td>
+    </tr>
+    <tr style="border-bottom: 0px solid black">
+        <td style="border-bottom: 0px solid black">
+            <div class="map-top"></div>
+            <iframe src="https://www.google.com/maps/d/embed?mid=15YveJarVCSAZrj3D_FBwUZ531mGwBlQ&hl=en&ehbc=2E312F"></iframe>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

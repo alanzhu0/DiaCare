@@ -10,7 +10,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-t)0+_%1wv!r-@3im@2lhbj@p-4_rfs*n-9w$j10jbx%tvffh%r'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 PRODUCTION = os.getenv("PRODUCTION", "").upper() == "TRUE"
 DEBUG = not PRODUCTION
@@ -29,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'app',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +61,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DiaCare.wsgi.application'
 
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/home'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -71,6 +73,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+AUTH_USER_MODEL = 'app.User'
 
 
 # Password validation
@@ -97,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'US/Eastern'
 
 USE_I18N = True
 
@@ -110,6 +114,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

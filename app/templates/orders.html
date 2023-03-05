@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    DiaCare - Orders
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'orders.css' %}">
+{% endblock %}
+
+{% block body %}
+    <div class="row" style="height: 75px; background-color: #FFEDCA;">
+        <a href="{% url 'food' %}" class="btn" style="border-radius: 0">
+            <h5 style="position: relative; top: 15px;">
+                <span style="position: relative; left: 12px">Order Food</span>
+                <span class="material-symbols-outlined" style="float: right; top: 2px;">arrow_circle_right</span>
+            </h5>
+        </a>
+    </div>
+    {% for order in orders %}
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h4>
+                                    <span class="material-symbols-outlined">list_alt</span>
+                                    Order #{{ order.id }}
+                                </h4>
+                                {% if order.complete %}
+                                    <span class="text-success">
+                                        Fulfilled on {{ order.date_fulfilled }}
+                                    </span>
+                                {% else %}
+                                    <i class="text-primary">
+                                        Scheduled for {{ order.date_scheduled }}
+                                    </i>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h5>
+                                    <span class="material-symbols-outlined">calendar_month</span>
+                                    Date ordered:
+                                </h5> 
+                                {{ order.date }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h5>
+                                    <span class="material-symbols-outlined">shopping_bag</span>
+                                    Type:
+                                </h5> 
+                                {{ order.type|title }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h5>
+                                    <span class="material-symbols-outlined">food_bank</span>
+                                    Food:
+                                </h5> 
+                                <ul>
+                                    {% for food in order.foods %}
+                                        <li>{{ food.food }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h5>
+                                    <span class="material-symbols-outlined">nutrition</span>
+                                    Produce:
+                                </h5> 
+                                <ul>
+                                    {% for produce in order.produces %}
+                                        <li>{{ produce.produce }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

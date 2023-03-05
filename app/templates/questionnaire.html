@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+  <link href="{% static 'questionnaire.css' %}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+  {% block nav %}{% endblock %}
+  <form class="form-signin" action="{% url 'questionnaire' %}" method="POST">
+    {% csrf_token %}
+  <div class="mx-0 mx-sm-auto">
+    <div class="card">
+      <div class="card-body">
+        <div class="text-center">
+          <i class="far fa-file-alt fa-4x mb-3 text-primary"></i>
+          <h1>
+            <strong>Why do you want to use this service?</strong>
+          </h1>
+          <br>
+          <p>
+            Please answer the following question in order to optimize your experience with our application
+          </p>
+        </div>
+  
+        <hr />
+        <div id="box">  
+        <form class="px-4" action="">
+          <label class="statement">Have you recieved groceries from us before?</label>
+          <ul class='likert' name="row1">
+            <li>
+              <input type="radio" name="likert1" value="Yes">
+              <label>Yes</label>
+            </li>
+            <li>
+              <input type="radio" name="likert1" value="Not_Sure">
+              <label>Not Sure</label>
+            </li>
+            <li>
+              <input type="radio" name="likert1" value="No">
+              <label>No</label>
+            </li>
+          </ul>
+
+          <label class="statement">Does your family participate in WIC or SNAP (EBT)?</label>
+          <ul class='likert' name="row2">
+            <li>
+              <input type="radio" name="likert2" value="Yes">
+              <label>Yes</label>
+            </li>
+            <li>
+              <input type="radio" name="likert2" value="Not_Sure">
+              <label>Not Sure</label>
+            </li>
+            <li>
+              <input type="radio" name="likert2" value="No">
+              <label>No</label>
+            </li>
+          </ul>
+          <br>
+          <p class="text-center"><strong>In the last 12 months:</strong></p>
+
+          <label class="statement">We worried our food would run out before we got money to by more.</label>
+          <ul class='likert' name="row3">
+            <li>
+              <input type="radio" name="likert3" value=1>
+              <label>Often True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert3" value=0.5>
+              <label>Sometimes True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert3" value=0>
+              <label>Never True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert3" value=-1>
+              <label>Don't Know or Decline to Answer</label>
+            </li>
+          </ul>
+          <label class="statement">We worried our food would run out before we got money to by more.</label>
+          <ul class='likert' name="row4">
+            <li>
+              <input type="radio" name="likert4" value=1>
+              <label>Often True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert4" value=0.5>
+              <label>Sometimes True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert4" value=0>
+              <label>Never True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert4" value=-1>
+              <label>Don't Know or Decline to Answer</label>
+            </li>
+          </ul>
+          <label class="statement">The food we ordered didn't last and we didn't have money to buy more.</label>
+          <ul class='likert' name="row5">
+            <li>
+              <input type="radio" name="likert5" value=1>
+              <label>Often True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert5" value=0.5>
+              <label>Sometimes True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert5" value=0>
+              <label>Never True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert5" value=-1>
+              <label>Don't Know or Decline to Answer</label>
+            </li>
+          </ul>
+          <label class="statement">We couldn't afford to eat balanced meals (protein with starch, fruits/vegetables at each meal for the entire family).</label>
+          <ul class='likert' name="row6">
+            <li>
+              <input type="radio" name="likert6" value=1>
+              <label>Often True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert6" value=0.5>
+              <label>Sometimes True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert6" value=0>
+              <label>Never True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert6" value=-1>
+              <label>Don't Know or Decline to Answer</label>
+            </li>
+          </ul>
+          <label class="statement">We (you or other adults in your household) have had to cut the size of our meals or skip meals because there wasn't enough money for food.</label>
+          <ul class='likert' name="row7">
+            <li>
+              <input type="radio" name="likert7" value=1>
+              <label>Often True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert7" value=0.5>
+              <label>Sometimes True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert7" value=0>
+              <label>Never True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert7" value=-1>
+              <label>Don't Know or Decline to Answer</label>
+            </li>
+          </ul>
+          <label class="statement">We often choose prepackaged food over fresh due to price.</label>
+          <ul class='likert' name="row8">
+            <li>
+              <input type="radio" name="likert8" value=1>
+              <label>Often True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert8" value=0.5>
+              <label>Sometimes True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert8" value=0>
+              <label>Never True</label>
+            </li>
+            <li>
+              <input type="radio" name="likert8" value=-1>
+              <label>Don't Know or Decline to Answer</label>
+            </li>
+          </ul>
+          <br>
+          <p class="text-center"><strong> If you answered "Often True" or "Sometimes True" to any of the Questions, please answer the following:</strong></p>
+          <label class="statement">How did you get here today?</label>
+          <ul class='likert' name="row9">
+            <li>
+              <input type="radio" name="likert9" value="car">
+              <label>Car</label>
+            </li>
+            <li>
+              <input type="radio" name="likert9" value="bus">
+              <label>Bus</label>
+            </li>
+            <li>
+              <input type="radio" name="likert9" value="metro">
+              <label>Metro</label>
+            </li>
+            <li>
+              <input type="radio" name="likert9" value="ride_share">
+              <label>Ride Share Service</label>
+            </li>
+          </ul>
+          <label class="statement">Which type of milk do you prefer?</label>
+          <ul class='likert' name="row9">
+            <li>
+              <input type="radio" name="likert10" value="almond">
+              <label>Almond</label>
+            </li>
+            <li>
+              <input type="radio" name="likert10" value="one_percent">
+              <label>1% Cow's Milk</label>
+            </li>
+          </ul>
+          <label class="statement">How many people live in your house?</label>
+          <ul class='likert' name="row10">
+            <li>
+              <input type="radio" name="likert11" value="one">
+              <label>1</label>
+            </li>
+            <li>
+              <input type="radio" name="likert11" value="two">
+              <label>2</label>
+            </li>
+            <li>
+              <input type="radio" name="likert11" value="three">
+              <label>3</label>
+            </li>
+            <li>
+              <input type="radio" name="likert11" value="four">
+              <label>4</label>
+            </li>
+            <li>
+              <input type="radio" name="likert11" value="five">
+              <label>5</label>
+            </li>
+            <li>
+              <input type="radio" name="likert11" value="six">
+              <label>6</label>
+            </li>
+            <li>
+              <input type="radio" name="likert11" value="seven">
+              <label>7</label>
+            </li>
+            <li>
+              <input type="radio" name="likert11" value="eight">
+              <label>8+</label>
+            </li>
+          </ul>
+          <div class="card-footer text-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+</form>
+
+
+{% endblock %}

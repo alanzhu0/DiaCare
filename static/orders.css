@@ -1,0 +1,29 @@
+.card-header {
+    padding-top: 12px;
+    background-color: rgb(237, 234, 234);
+}
+
+.card, .card-header {
+    border-radius: 0 !important;
+}
+
+h5 {
+    margin: 0;
+}
+
+.row {
+    width: 102.8%;
+}
+
+.col {
+    padding-right: 0px;
+}
+
+.card-body .row {
+    margin-bottom: 10px;    
+}
+
+.material-symbols-outlined {
+    position: relative;
+    top: 4px;
+}
