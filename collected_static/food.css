@@ -1,0 +1,83 @@
+.foods-container, .foods-header, .produce-container, .produce-header {
+    background-color: #FFEDCA;
+    border-radius: 5px;
+    padding-bottom: 1px;
+}
+
+.foods-header, .produce-header, .produce-category-container {
+    background-color: #f9d483;
+    padding: 10px; 
+    border-radius: 5px 5px 0 0;
+}
+
+.produce-container, .produce-category-container, select {
+    background-color: rgb(191, 255, 191) !important;
+    border: 0px solid black !important;
+}
+
+select {
+    background-color: rgb(128, 237, 128) !important;
+    height: fit-content;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.produce-header {
+    background-color: rgb(117, 255, 117);
+}
+
+.food-quantity, .produce-quantity {
+    color: #a4720e;
+    font-size: 9pt;
+    font-weight: bold;
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+}
+
+.produce-quantity {
+    position: static;
+    display: block;
+    color: #0a7e0a;
+    text-align: right;
+}
+
+.produce-quantities {
+    line-height: .7;
+    width: 25%;
+}
+
+li {
+    position: relative;
+}
+
+.max-choices {
+    font-size: 12pt;
+    font-weight: normal;
+}
+
+.produce-category {
+    padding-left: 10px;
+}
+
+button[type=submit] {
+    width: 100%;
+    margin-bottom: 0%;
+}
+
+input[type=datetime-local], input[type=datetime-local]:focus {
+    border: 0px solid black;
+    background-color:rgb(61, 211, 252);
+}
+
+select.type-select {
+    background-color:rgb(255, 148, 109) !important;
+}
+
+.date-container, .date-header {
+    background-color:rgb(143, 231, 255);
+}
+
+.type-container, .type-header {
+    background-color:rgb(255, 178, 149);
+}

@@ -1,0 +1,57 @@
+body {
+    background-color: #FFEDCA;
+}
+
+.basictext {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.tr-header {
+    background-color: rgb(161, 222, 224);
+    font-size: 16pt;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+
+.mail-symbol {
+    float: right;
+
+}
+
+.right-link {
+    float: right;
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+.header-icon {
+    position: relative;
+    top: 4px;
+    color: rgb(14, 130, 159);
+    font-weight: bold;
+}
+
+iframe {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    bottom: 120px;
+}
+
+.map-top {
+    position: relative;
+    right: 1px;
+    bottom: 50px;
+    height: 70px;
+    background-color: #FFEDCA;
+    z-index: 10;
+    width: calc(100% + 2px);
+}
+
+.foodbanks-header {
+    position: relative;
+    z-index: 21;
+}
+
+

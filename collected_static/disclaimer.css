@@ -1,0 +1,26 @@
+body {
+    background-color: darkgray;
+}
+h1 {
+    text-align: center;
+}
+#box {
+    margin: 5% 20%;
+    padding:2%;
+    background-color: aliceblue;
+}
+#check {
+    margin-left:50%;
+    height:5%;
+    width:5%;
+}
+
+#agree {
+    height:2%;
+    width:100%;
+    background-color: lightcyan;
+}
+
+p {
+    font-size: large;
+}
