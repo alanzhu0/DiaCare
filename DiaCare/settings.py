@@ -47,7 +47,9 @@ DEBUG = not PRODUCTION
 ALLOWED_HOSTS = [
     "localhost",
     "ec2-18-220-152-191.us-east-2.compute.amazonaws.com",
-    "diacare-j7v7szeewq-uk.a.run.app",
+    "diacare.herokuapp.com",
+    "diacare.tech",
+    "www.diacare.tech",
 ]
 
 
