@@ -46,15 +46,18 @@ DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = [
     "localhost",
+    "127.0.0.1",
     "ec2-18-220-152-191.us-east-2.compute.amazonaws.com",
     "diacare.herokuapp.com",
     "diacare.tech",
     "www.diacare.tech",
 ]
 
-
-
-# Application definition
+CSRF_TRUSTED_ORIGINS = [
+    "https://diacare.herokuapp.com",
+    "https://diacare.tech",
+    "https://*.diacare.tech",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',

@@ -65,6 +65,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-input {rgb(201, 201,rgb(191, 213, 197)
-  background-color: #a3e8b3 !important;
+input {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.material-symbols-outlined {
+  position: relative;
+  top: 4px;
+  right: 4px;
 }

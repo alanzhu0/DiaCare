@@ -8,30 +8,30 @@
     {% block footer %}{% endblock %}
     <form class="form-signin" action="{% url 'login' %}" method="post">
         <div class="form-group">
-        {% csrf_token %}
-        <div id="box">
-            <img class="mb-4" src="{% static 'images/logo_transparent.png' %}" alt="Diacare Logo">
-            <h1 class="h3 mb-3 font-weight-normal signintext" id="signhead"><b>Sign in to DiaCare</b></h1>
+            {% csrf_token %}
+            <div id="box">
+                <img class="mb-4" src="{% static 'images/logo_transparent.png' %}" alt="Diacare Logo">
+                <h1 class="h3 mb-3 font-weight-normal signintext" id="signhead"><b>Sign in to DiaCare</b></h1>
+            </div>
+            <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required autofocus>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+            <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
+            <button class="btn btn-lg btn-primary btn-block">
+                <a style="color: white; text-decoration: none;" href="{% url 'signup' %}">Sign up</a>
+            </button>
         </div>
-        <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required autofocus>
-        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
-        <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
-        <button class="btn btn-lg btn-primary btn-block" >
-            <a style="color: white; text-decoration: none;" href="{% url 'signup' %}">Sign up<a>
-        </button>
-
         {% if error %}
-            <br><br>
+            <br>
             <div class="alert alert-danger" role="alert">
-                {{ error }}
+                <span class="material-symbols-outlined">warning</span>
+                <span>{{ error }}</span>
             </div>
         {% endif %}
         {% if message %}
-            <br><br>
+            <br>
             <div class="alert alert-success" role="alert">
                 {{ message }}
             </div>
         {% endif %}
-        </div>
     </form>
 {% endblock %}

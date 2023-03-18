@@ -93,13 +93,13 @@ def login(request):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return render(request, 'login.html', {'error': 'User does not exist.'})
+            return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
 
         user = authenticate(username=user.email, password=password)
         if user is not None:
             auth_login(request, user)
             return redirect(reverse('home'))
-        return render(request, 'login.html', {'error': 'Invalid credentials.'})
+        return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
 
     return render(request, 'login.html')
 
