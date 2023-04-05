@@ -7,7 +7,7 @@
 .foods-header, .produce-header, .produce-category-container {
     background-color: #f9d483;
     padding: 10px; 
-    border-radius: 5px 5px 0 0;
+    border-radius: 5px;
 }
 
 .produce-container, .produce-category-container, select {
@@ -17,13 +17,16 @@
 
 select {
     background-color: rgb(128, 237, 128) !important;
-    height: fit-content;
     z-index: 1;
     overflow: hidden;
 }
 
 .produce-header {
     background-color: rgb(117, 255, 117);
+}
+
+.produce-quantities {
+    display: none;
 }
 
 .food-quantity, .produce-quantity {

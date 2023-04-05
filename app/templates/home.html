@@ -9,11 +9,6 @@
     <link href="{% static 'home.css' %}" rel="stylesheet">
 {% endblock %}
 
-{% block js %}
-    <script src="{% static 'home.js' %}"></script>
-{% endblock %}
-
-
 {% block body %}
 <table class="table infotable">
     <tr style="height: 75px; background-color: #87fa87;">
@@ -107,6 +102,8 @@
         </td>
     </tr>
 
+    {% comment %}
+    {# Foodbanks map #}
     <tr class="tr-header foodbanks-header">
         <td>
             <span class="material-symbols-outlined header-icon">location_on</span> 
@@ -119,6 +116,6 @@
             <iframe src="https://www.google.com/maps/d/embed?mid=15YveJarVCSAZrj3D_FBwUZ531mGwBlQ&hl=en&ehbc=2E312F"></iframe>
         </td>
     </tr>
+    {% endcomment %}
 </table>
-
 {% endblock %}
