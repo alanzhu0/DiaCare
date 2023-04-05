@@ -50,7 +50,8 @@ ALLOWED_HOSTS = [
     "ec2-18-220-152-191.us-east-2.compute.amazonaws.com",
     "diacare.herokuapp.com",
     "diacare.tech",
-    "www.diacare.tech",
+    ".diacare.tech",
+    ".onrender.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
