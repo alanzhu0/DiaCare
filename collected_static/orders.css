@@ -34,15 +34,30 @@ h5 {
 }
  
 .edit-order {
-    font-size: 14pt;
+    font-size: 13pt;
     font-weight: bold;
     float: right;
     position: relative;
-    top: -20px;
+    top: -32px;
 }
 
-.edit-order a {
+.edit-order .edit-order-button {
+    color: rgb(0, 183, 0) !important;
+}
+
+.edit-order .cancel-order-button {
     color: #ff3939 !important;
+}
+
+.open-order {
+    cursor: auto;
+    background-color: rgb(124, 231, 235);
+    height: auto;
+    padding-top: 10px;
+}
+
+.card-header {
+    height: 85px;
 }
 
 @media(max-width: 550px) {
@@ -61,5 +76,9 @@ h5 {
     .edit-icon {
         margin-left: 4px;
         margin-right: 8px;
+    }
+
+    .card-header {
+        height: auto;
     }
 }

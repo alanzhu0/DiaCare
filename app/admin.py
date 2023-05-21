@@ -123,6 +123,10 @@ class OrderAdmin(admin.ModelAdmin):
         return obj.fulfilled
     fulfilled.boolean = True
     
+    def cancelled(obj):
+        return obj.cancelled
+    cancelled.boolean = True
+    
     list_display = (
         'id',
         'user',
@@ -130,6 +134,7 @@ class OrderAdmin(admin.ModelAdmin):
         'date_scheduled',
         'date_fulfilled',
         fulfilled,
+        cancelled,
         'type',
         'patient_comments',
         'admin_comments',

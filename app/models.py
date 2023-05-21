@@ -157,6 +157,7 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     date_scheduled = models.DateTimeField(blank=True, null=True)
     date_fulfilled = models.DateTimeField(blank=True, null=True)
+    date_cancelled = models.DateTimeField(blank=True, null=True)
     type = models.CharField(choices=(
         ("pickup", "Pickup"),
         ("delivery", "Delivery"),
@@ -168,6 +169,10 @@ class Order(models.Model):
     @property
     def fulfilled(self):
         return self.date_fulfilled is not None and self.date_fulfilled < timezone.now()
+    
+    @property
+    def cancelled(self):
+        return self.date_cancelled is not None
 
     @property
     def foods(self):

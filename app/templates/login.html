@@ -5,12 +5,11 @@
 {% endblock %}
 {% block body %}
     {% block nav %}{% endblock %}
-    {% block footer %}{% endblock %}
     <form class="form-signin" action="{% url 'login' %}" method="post">
         <div class="form-group">
             {% csrf_token %}
             <div id="box">
-                <img class="mb-4" src="{% static 'images/logo_transparent.png' %}" alt="Diacare Logo">
+                <img class="mb-4 logo" src="{% static 'images/logo_transparent.png' %}" alt="Diacare Logo">
                 <h1 class="h3 mb-3 font-weight-normal signintext" id="signhead"><b>Sign in to DiaCare</b></h1>
             </div>
             <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required autofocus>

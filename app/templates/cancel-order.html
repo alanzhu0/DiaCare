@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    DiaCare - Cancel Order
+{% endblock %}
+
+{% block css %}
+    <style>
+        .container {
+            height: 100vh;
+        }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+<br>
+<div class="container">
+    <h1>Cancel Order #{{ order.number }} (ID: {{ order.id }})</h1>
+    <p>Cancel your order that you placed on {{ order.date_ordered }}</p>
+    <br><br><br><br>
+    <hr>
+    <div style="text-align: center">
+        <h3>Are you sure you want to cancel this order?</h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="order" value="{{ order.id }}">
+            <a href="{% url 'orders' %}" class="btn btn-primary">No, Go Back</a>
+            &nbsp;
+            <button type="submit" class="btn btn-danger">Yes, Cancel Order</button>
+        </form>
+    </div>
+    <hr>
+</div>
+{% endblock %}

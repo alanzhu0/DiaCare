@@ -3,19 +3,16 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.hashers import make_password
+from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from django.shortcuts import render
 from django.db.models import Q
 
 from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
 
 logger = logging.getLogger(__name__)
-
-
-def base_layout(request):
-    template = 'app/base.html'
-    return render(request, template)
 
 
 def index(request):
@@ -31,12 +28,15 @@ def order_food(request):
         if request.POST.get('order'):
             try:
                 order = Order.objects.get(id=request.POST.get('order'))
+                messages.success(request, f"Order #{order.number} was updated successfully.")
             except Order.DoesNotExist:
                 order = Order.objects.create(user=user)
                 order.number = Order.objects.filter(user=user).last().number + 1
+                messages.success(request, f"Successfully placed Order #{order.number}.")
         else:
             order = Order.objects.create(user=user)
             order.number = Order.objects.filter(user=user).order_by('number').last().number + 1
+            messages.success(request, f"Successfully placed Order #{order.number}.")
                 
         order.type = request.POST.get('type')
         order.date_scheduled = request.POST.get('date')
@@ -73,9 +73,11 @@ def order_food(request):
         try:
             order = Order.objects.get(id=request.GET.get("id"))
         except Order.DoesNotExist:
+            messages.error(request, "Unable to edit order.")
             return redirect(reverse("order_food"))
         
-        if order.fulfilled or order.user != request.user:
+        if order.fulfilled or order.cancelled or order.user != request.user:
+            messages.error(request, "Unable to edit order.")
             return redirect(reverse("order_food"))
         
         return render(request, 'order-food.html', {
@@ -85,15 +87,47 @@ def order_food(request):
             "order_producechoice_ids": [produce.produce.id for produce in order.produces.all()],
         })
 
+    if Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True).exists():
+        messages.error(request, "You cannot place an order at this time because you already have an open order.")
+        return redirect(reverse("orders"))
+    
     return render(request, 'order-food.html', {
         "foods": FoodChoice.objects.filter(active=True),
         "produce_categories": ProduceCategory.objects.all(),
-    })
+    })  
+    
+@login_required
+def cancel_order(request):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=request.POST.get('order'))
+        order.date_cancelled = timezone.now()
+        order.save()
+        messages.success(request, f"Order #{order.number} has been cancelled.")
+        return redirect(reverse('orders'))
+    if request.GET.get("id"):
+        try:
+            order = Order.objects.get(id=request.GET.get("id"))
+        except Order.DoesNotExist:
+            messages.error(request, "Unable to cancel order.")
+            return redirect(reverse("orders"))
+        
+        if order.fulfilled or order.cancelled or order.user != request.user:
+            messages.error(request, "Unable to cancel order.")
+            return redirect(reverse("orders"))
+        return render(request, 'cancel-order.html', {
+            "order": order,
+        })
+    return redirect(reverse('orders'))
 
 
 @login_required
 def orders(request):
-    return render(request, 'orders.html', {"orders": Order.objects.filter(user=request.user)})
+    orders = Order.objects.filter(user=request.user).order_by('-number')
+    return render(request, 'orders.html', {
+        "orders": orders,
+        "has_open_order": orders.filter(date_fulfilled__isnull=True, date_cancelled__isnull=True).exists(),
+        "last_order": orders.first() if orders.exists() else None,
+    })
 
 
 def login(request):

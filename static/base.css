@@ -26,6 +26,7 @@ nav .profile > a {
     font-size: 18pt;
     font-weight: bold;
     color: black;
+    text-align: center;
 }
 
 .footer-logo {
@@ -35,6 +36,12 @@ nav .profile > a {
 footer {
     background-color: rgb(245, 245, 245);
     padding: 20px;
+}
+
+.messages {
+    position: fixed;
+    bottom: 0;
+    right: 15px;
 }
 
 

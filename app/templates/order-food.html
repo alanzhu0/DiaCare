@@ -13,12 +13,37 @@
     <script>
         $(function () {
             let el, next;
+            let counter = 0;
             {% for category in produce_categories %}
                 el = $('.select-{{ category.id }}');
                 el.attr("size", $('.select-{{ category.id }} option').length);
                 el.parent()
                 .css("margin-bottom", "0")
                 .css("height", el.height() + 100 + "px");
+
+                // Only allow the user to select up to the maximum number of choices
+                let selectedOptions{{ category.id }};
+                el.on('change', function() {
+                    if($(this).find(':selected').length > {{ category.maximum_choices }}) {
+                        $(this).val(selectedOptions{{ category.id }});
+                        let id = "msg-{{ category.id }}-" + counter;
+                        let msg = $(".messages").append(`
+                            <div class='alert alert-danger alert-dismissable' style="display:none" id='${id}'>
+                                <i class='fa-solid fa-triangle-exclamation'></i> 
+                                You may only select up to {{ category.maximum_choices }} items for the {{ category }} category.  
+                                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div></div>
+                        `);
+                        setTimeout(function() {
+                            $('#' + id).fadeIn('fast');
+                        }, 100);
+                        setTimeout(function() {
+                            $('#' + id).fadeOut('fast');
+                        }, 2000);
+                        counter++;
+                        return;
+                    }
+                    selectedOptions{{ category.id }} = $(this).val();
+                });
 
                 if(window.innerWidth > 1200) {
                     next = el.next();
@@ -47,7 +72,7 @@
         <p>Edit your order that you placed on {{ order.date_ordered }}</p>
     {% else %}
         <h1>Order Food</h1>
-        <p>Place an order for food from the Children's National's Food Pharmacy.</p>
+        <p>Place an order for food from Children's National's Food Pharmacy.</p>
     {% endif %}
     {% if error %}
         <div class="alert alert-danger">
@@ -99,7 +124,7 @@
                                         selected
                                     {% endif %}
                                 >
-                                    {{ produce }}
+                                {{ produce }}
                                 </option>
                             {% endfor %}
                         </select>

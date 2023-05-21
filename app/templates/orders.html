@@ -11,12 +11,25 @@
 
 {% block body %}
 
+{% if has_open_order %}
+<div class="banner-center open-order d-flex justify-content-center align-items-center">
+    <div>
+        You currently have an open order.
+        <br>
+        <p class="small-desc">
+            Your next order (Order #{{ last_order.number }}) is scheduled for {{ last_order.date_scheduled }}
+            You can edit it or cancel it below.
+        </p>  
+    </div>
+</div>
+{% else %}
 <a href="{% url 'order_food' %}" class="text-decoration-none">
     <div class="d-flex justify-content-center align-items-center banner-center">
         <span>Order Food</span> &nbsp;&nbsp;
         <i class="fa-solid fa-circle-arrow-right"></i>
     </div>
 </a> 
+{% endif %}
 
 {% for order in orders %}
     <div class="card">
@@ -30,15 +43,26 @@
                     <i class="fa-solid fa-check status-icon"></i>
                     Fulfilled on {{ order.date_fulfilled }}
                 </b>
+            
+            {% elif order.cancelled %}
+                <b class="text-danger">
+                    <i class="fa-solid fa-times status-icon"></i>
+                    Cancelled on {{ order.date_cancelled }}
+                </b>
             {% else %}
                 <b class="text-primary">
                     <i class="fa-solid fa-clock status-icon"></i>
                     Scheduled for {{ order.date_scheduled }}
                 </b>
                 <span class="edit-order">
-                    <a href="{% url 'order_food' %}?id={{ order.id }}" class="text-decoration-none">
+                    <a href="{% url 'order_food' %}?id={{ order.id }}" class="edit-order-button text-decoration-none">
                         <i class="fa-solid fa-pencil edit-icon"></i>
                         Edit Order
+                    </a>
+                    <br>
+                    <a href="{% url 'cancel_order' %}?id={{ order.id }}" class="cancel-order-button text-decoration-none">
+                        <i class="fa-solid fa-times edit-icon"></i>
+                        &nbsp;Cancel Order
                     </a>
                 </span>
             {% endif %}

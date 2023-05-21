@@ -5,7 +5,6 @@
 {% endblock %}
 {% block body %}
   {% block nav %}{% endblock %}
-  {% block footer %}{% endblock %}
   <form class="form-signin" action="{% url 'signup' %}" method="POST">
   {% csrf_token %}
   <section class="h-100 bg-dark">
