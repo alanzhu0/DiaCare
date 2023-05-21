@@ -124,7 +124,7 @@ class ProduceCategory(models.Model):
 
     class Meta:
         ordering = ['display_order', 'name']
-        verbose_name_plural = "Produce categories"
+        verbose_name_plural = "produce categories"
 
 
 class Food(models.Model):

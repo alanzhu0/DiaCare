@@ -45,7 +45,7 @@ h5 {
     color: #ff3939 !important;
 }
 
-@media(max-width: 991px) {
+@media(max-width: 550px) {
     .edit-order {
         font-size: var(--bs-body-font-size);
         float: none;
