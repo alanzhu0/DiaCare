@@ -1,17 +1,12 @@
 import logging
-from datetime import datetime, time, timedelta
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
-from django.utils import timezone
 from django.shortcuts import render
-from django.core import serializers
-from . models import feed
-import json
+from django.db.models import Q
 
 from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
 
@@ -32,21 +27,33 @@ def index(request):
 def order_food(request):
     if request.method == 'POST':
         user = request.user
-        order = Order.objects.create(user=user)
+        
+        if request.POST.get('order'):
+            try:
+                order = Order.objects.get(id=request.POST.get('order'))
+            except Order.DoesNotExist:
+                order = Order.objects.create(user=user)
+                order.number = Order.objects.filter(user=user).last().number + 1
+        else:
+            order = Order.objects.create(user=user)
+            order.number = Order.objects.filter(user=user).order_by('number').last().number + 1
                 
         order.type = request.POST.get('type')
         order.date_scheduled = request.POST.get('date')
+        order.patient_comments = request.POST.get('patient-comments')
         
         # Create Food objects
+        Food.objects.filter(order=order).delete()
         for food in FoodChoice.objects.filter(active=True):
             Food.objects.create(order=order, food=food)
 
         # Create Produce objects
+        Produce.objects.filter(order=order).delete()
         for category in ProduceCategory.objects.all():
             produce_list = request.POST.getlist(f"category-{category.id}")
             
             if len(produce_list) > category.maximum_choices:
-                return render(request, 'food.html', {
+                return render(request, 'order-food.html', {
                     "foods": FoodChoice.objects.filter(active=True),
                     "produce_categories": ProduceCategory.objects.all(),
                     "error": f"Too many produce choices selected for {category.name}."
@@ -61,6 +68,22 @@ def order_food(request):
                     continue
         order.save()
         return redirect(reverse('orders'))
+
+    if request.GET.get("id"):
+        try:
+            order = Order.objects.get(id=request.GET.get("id"))
+        except Order.DoesNotExist:
+            return redirect(reverse("order_food"))
+        
+        if order.fulfilled or order.user != request.user:
+            return redirect(reverse("order_food"))
+        
+        return render(request, 'order-food.html', {
+            "foods": FoodChoice.objects.filter(active=True),
+            "produce_categories": ProduceCategory.objects.all(),
+            "order": order,
+            "order_producechoice_ids": [produce.produce.id for produce in order.produces.all()],
+        })
 
     return render(request, 'order-food.html', {
         "foods": FoodChoice.objects.filter(active=True),

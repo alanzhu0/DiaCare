@@ -19,55 +19,74 @@
 </a> 
 
 {% for order in orders %}
-            <div class="card">
-                <div class="card-header">
-                    <h4>
-                        <i class="fa-solid fa-list"></i>
-                        Order #{{ forloop.revcounter }} (ID: {{ order.id }})
-                    </h4>
-                    {% if order.complete %}
-                        <span class="text-success">
-                            Fulfilled on {{ order.date_fulfilled }}
-                        </span>
-                    {% else %}
-                        <i class="text-primary">
-                            Scheduled for {{ order.date_scheduled }}
-                        </i>
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <h5>
-                        <i class="fa-solid fa-calendar"></i>
-                        Date ordered:
-                    </h5> 
-                    {{ order.date }}
-                    <br><br>
-                    <h5>
-                        <i class="fa-sharp fa-solid fa-bag-shopping"></i>
-                        Type:
-                    </h5> 
-                    {{ order.type|title }}
-                    <br><br>
-                    <h5>
-                        <i class="fa-solid fa-bowl-food"></i>
-                        Food:
-                    </h5> 
-                    <ul>
-                        {% for food in order.foods %}
-                            <li>{{ food.food }}</li>
-                        {% endfor %}
-                    </ul>
-                    <h5>
-                        <i class="fa-sharp fa-solid fa-apple-whole"></i>
-                        Produce:
-                    </h5> 
-                    <ul>
-                        {% for produce in order.produces %}
-                            <li>{{ produce.produce }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-header">
+            <h4>
+                <i class="fa-solid fa-list"></i>
+                Order #{{ order.number }} (ID: {{ order.id }})
+            </h4>
+            {% if order.fulfilled %}
+                <b class="text-success">
+                    <i class="fa-solid fa-check status-icon"></i>
+                    Fulfilled on {{ order.date_fulfilled }}
+                </b>
+            {% else %}
+                <b class="text-primary">
+                    <i class="fa-solid fa-clock status-icon"></i>
+                    Scheduled for {{ order.date_scheduled }}
+                </b>
+                <span class="edit-order">
+                    <a href="{% url 'order_food' %}?id={{ order.id }}" class="text-decoration-none">
+                        <i class="fa-solid fa-pencil edit-icon"></i>
+                        Edit Order
+                    </a>
+                </span>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <h5>
+                <i class="fa-solid fa-calendar"></i>
+                Date ordered:
+            </h5> 
+            {{ order.date_ordered }}
+            <br><br>
+
+            <h5>
+                <i class="fa-sharp fa-solid fa-bag-shopping"></i>
+                Type:
+            </h5> 
+            {{ order.type|title }}
+            <br><br>
+
+            {% if order.patient_comments %}
+                <h5>
+                    <i class="fa-solid fa-comment"></i>
+                    Comments:
+                </h5>
+                {{ order.patient_comments }}
+                <br><br>
+            {% endif %}
+
+            <h5>
+                <i class="fa-solid fa-bowl-food"></i>
+                Food:
+            </h5> 
+            <ul>
+                {% for food in order.foods %}
+                    <li>{{ food.food }}</li>
+                {% endfor %}
+            </ul>
+            <h5>
+                <i class="fa-sharp fa-solid fa-apple-whole"></i>
+                Produce:
+            </h5> 
+            <ul>
+                {% for produce in order.produces %}
+                    <li>{{ produce.produce }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 {% empty %}
 <h5 style="position: relative; top: 15px; text-align: center">
     No orders yet!

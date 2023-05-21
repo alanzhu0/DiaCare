@@ -47,9 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     next_clinic_visit = models.DateTimeField(blank=True, null=True)
     next_food_batch = models.DateTimeField(blank=True, null=True)
     
-    user_comments = models.TextField(blank=True, help_text="Comments from the patient")
-    medical_comments = models.TextField(blank=True, help_text="Comments from the doctor, dietician, or clinic regarding the patient's medical conditions")
-    admin_comments = models.TextField(blank=True, help_text="Comments from DiaCare administrators")
+    patient_comments = models.TextField(blank=True, help_text="Comments from the patient")
+    medical_comments = models.TextField(blank=True, help_text="Comments from the doctor, dietician, or clinic regarding the patient's medical conditions. Not visible to patient.")
+    admin_comments = models.TextField(blank=True, help_text="Comments from DiaCare administrators. Not visible to patient.")
 
     USERNAME_FIELD = 'email'
 
@@ -95,7 +95,7 @@ class ProduceChoice(models.Model):
     category = models.ForeignKey('ProduceCategory', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name} ({self.quantity}) - Inactive" if not self.active else f"{self.name} ({self.quantity})"
+        return f"{self.name} ({self.quantity})"
 
     class Meta:
         ordering = ['name']
@@ -114,6 +114,10 @@ class ProduceCategory(models.Model):
     @property
     def produces(self):
         return ProduceChoice.objects.filter(category=self)
+    
+    @property
+    def active_produces(self):
+        return self.produces.filter(active=True)
 
     def __str__(self):
         return self.name
@@ -142,7 +146,7 @@ class FoodChoice(models.Model):
     active = models.BooleanField(default=True, help_text="Whether this food choice is currently available for selection")
 
     def __str__(self):
-        return f"{self.name} ({self.quantity}) - Inactive" if not self.active else f"{self.name} ({self.quantity})"
+        return f"{self.name} ({self.quantity})"
 
     class Meta:
         ordering = ['name']
@@ -157,6 +161,9 @@ class Order(models.Model):
         ("pickup", "Pickup"),
         ("delivery", "Delivery"),
     ), max_length=255, default="Pickup")
+    patient_comments = models.TextField(blank=True, help_text="Comments from the patient regarding this order")
+    admin_comments = models.TextField(blank=True, help_text="Comments from food pharmacy staff regarding this order. Not visible to patient.")
+    number = models.IntegerField(default=0, help_text="Order number, incremented individually for each user")
     
     @property
     def fulfilled(self):

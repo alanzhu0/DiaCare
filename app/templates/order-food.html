@@ -29,6 +29,9 @@
                     {% comment %} .parent()
                     .css("margin-bottom", next.height() * -1);
                     .css("height", next.height() + 100 + "px"); {% endcomment %}
+                    $('.select-{{ category.id }} option').each(function() {
+                        $(this).text($(this).text().trim().replace(/\([^)]*\)$/g, "").trim());
+                    });
                 }
             {% endfor %}
          });
@@ -39,16 +42,25 @@
 {% block body %}
 <br>
 <div class="container">
-    <h1>Order Food</h1>
-    <p>View the food that will come with every order and choose the produce you wish to order.</p>
+    {% if order %}
+        <h1>Edit Order #{{ order.number }} (ID: {{ order.id }})</h1>
+        <p>Edit your order that you placed on {{ order.date_ordered }}</p>
+    {% else %}
+        <h1>Order Food</h1>
+        <p>Place an order for food from the Children's National's Food Pharmacy.</p>
+    {% endif %}
     {% if error %}
         <div class="alert alert-danger">
             {{ error }}
         </div>
     {% endif %}
-    <form method="post" action="/">
+    <form method="post" action="">
         {% csrf_token %}
         <div class="form-group">
+            {% if order %}
+                <input type="hidden" name="order" value="{{ order.id }}">
+            {% endif %}
+
             <div class="foods-container">
                 <h4 class="foods-header">
                     Food
@@ -81,14 +93,18 @@
                             <i class="max-choices">Choose up to {{ category.maximum_choices }} items.</i>
                         </h5>
                         <select name="category-{{ category.id }}" multiple class="form-control select-{{ category.id }}" required>
-                            {% for produce in category.produces %}
-                                <option value="{{ produce.id }}">
+                            {% for produce in category.active_produces %}
+                                <option value="{{ produce.id }}"
+                                    {% if order and produce.id in order_producechoice_ids %}
+                                        selected
+                                    {% endif %}
+                                >
                                     {{ produce }}
                                 </option>
                             {% endfor %}
                         </select>
                         <div class="produce-quantities">
-                            {% for produce in category.produces %}
+                            {% for produce in category.active_produces %}
                                 <span class="produce-quantity">{{ produce.quantity }}</span>
                                 <br>
                             {% endfor %}
@@ -106,8 +122,16 @@
                     <small class="small-desc">Pickup or delivery of food.</small>
                 </h4>
                 <select name="type" class="form-control type-select" required>
-                    <option value="pickup">Pickup</option>
-                    <option value="delivery">Delivery</option>
+                    <option value="pickup"
+                        {% if order and order.type == "pickup" %}
+                            selected
+                        {% endif %}
+                    >Pickup</option>
+                    <option value="delivery"
+                        {% if order and order.type == "delivery" %}
+                            selected
+                        {% endif %}
+                    >Delivery</option>
                 </select>
             </div>
         </div>
@@ -119,12 +143,38 @@
                     <br>
                     <small class="small-desc">Date to pickup or deliver the food.</small>
                 </h4>
-                <input type="datetime-local" name="date" class="form-control" placeholder="Schedule pickup or delivery" required>
+                <input type="datetime-local" name="date" class="form-control" placeholder="Schedule pickup or delivery" required
+                    {% if order %}
+                        value="{{ order.date_scheduled|date:'Y-m-d' }}T{{ order.date_scheduled|date:'H:i' }}"
+                    {% endif %}
+                >
             </div>
         </div>
         <br>
         <div class="form-group">
-            <button type="submit" class="btn btn-success">Place Order</button>
+            <div class="comments-container">
+                <h4 class="comments-header">
+                    Comments
+                    <br>
+                    <small class="small-desc">If you have anything else you want Food Pharmacy staff to know about your order, include it here.</small>
+                </h4>
+                <textarea 
+                    name="patient-comments" 
+                    class="form-control" 
+                    placeholder="Add your comments here or leave blank if you have no additional comments."
+                >{% if order %}{{ order.patient_comments }}{% endif %}</textarea>
+            </div>
+        </div>
+        <br>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">
+                {% if order %}
+                    Edit
+                {% else %}
+                    Place 
+                {% endif %}
+                Order
+            </button>
         </div>
         <br><br>
     </form>

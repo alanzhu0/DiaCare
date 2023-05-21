@@ -1,9 +1,9 @@
 nav.navbar {
-    background-color: #ffc4c4 !important;
+    background-color: rgb(245, 245, 245) !important;
 }
 
 nav .active {
-    background-color: #ff9797 !important;
+    background-color: rgb(219, 219, 219) !important;
     border-radius: 5px;
     font-weight: bold;
 }

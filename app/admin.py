@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.conf import settings
+from django.utils import timezone
 from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
 
 admin.site.site_header = "DiaCare Administration"
@@ -23,7 +24,7 @@ class UserAdmin(admin.ModelAdmin):
         'last_food_received',
         'is_active',
         admin,
-        'user_comments',
+        'patient_comments',
         'medical_comments',
         'admin_comments',
     )
@@ -42,7 +43,7 @@ class UserAdmin(admin.ModelAdmin):
         'middle_name',
         'last_name',
         'email',
-        'user_comments',
+        'patient_comments',
         'medical_comments',
         'admin_comments',
     )
@@ -123,12 +124,15 @@ class OrderAdmin(admin.ModelAdmin):
     fulfilled.boolean = True
     
     list_display = (
+        'id',
         'user',
         'date_ordered',
         'date_scheduled',
         'date_fulfilled',
         fulfilled,
         'type',
+        'patient_comments',
+        'admin_comments',
     )
     
     list_filter = (
@@ -141,6 +145,8 @@ class OrderAdmin(admin.ModelAdmin):
     
     search_fields = (
         'user',
+        'patient_comments',
+        'admin_comments',
     )
     
     actions = (

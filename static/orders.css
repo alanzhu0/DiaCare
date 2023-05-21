@@ -27,4 +27,39 @@ h5 {
     font-weight: normal; 
     font-size: 12pt;
 }
+
+.status-icon {
+    margin-left: 4px;
+    margin-right: 8px;
+}
  
+.edit-order {
+    font-size: 14pt;
+    font-weight: bold;
+    float: right;
+    position: relative;
+    top: -20px;
+}
+
+.edit-order a {
+    color: #ff3939 !important;
+}
+
+@media(max-width: 550px) {
+    .edit-order {
+        font-size: var(--bs-body-font-size);
+        float: none;
+        position: static;
+        margin-bottom: 10px;
+    }
+
+    .edit-order::before {
+        content: "\a";
+        white-space: pre;
+    }
+
+    .edit-icon {
+        margin-left: 4px;
+        margin-right: 8px;
+    }
+}
