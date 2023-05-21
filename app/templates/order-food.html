@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'food.css' %}">
+    <link rel="stylesheet" href="{% static 'order-food.css' %}">
 {% endblock %}
 
 {% block js %}
@@ -40,20 +40,20 @@
 <br>
 <div class="container">
     <h1>Order Food</h1>
-    <p>View the food will come with every order and choose the produce you wish to order.</p>
+    <p>View the food that will come with every order and choose the produce you wish to order.</p>
     {% if error %}
         <div class="alert alert-danger">
             {{ error }}
         </div>
     {% endif %}
-    <form method="post" action="{% url 'food' %}">
+    <form method="post" action="/">
         {% csrf_token %}
         <div class="form-group">
             <div class="foods-container">
                 <h4 class="foods-header">
                     Food
                     <br>
-                    <small style="font-weight: normal; font-size: 12pt">These foods will come with every order.</small>
+                    <small class="small-desc">These foods will come with every order.</small>
                 </h4>
                 <ul>
                 {% for food in foods %}
@@ -71,7 +71,7 @@
                 <h4 class="produce-header">
                     Produce
                     <br>
-                    <small style="font-weight: normal; font-size: 12pt">Choose the produce you wish to order.</small>
+                    <small class="small-desc">Choose the produce you wish to order.</small>
                 </h4>
                 {% for category in produce_categories %}
                     <div class="produce-category-container">
@@ -103,7 +103,7 @@
                 <h4 class="foods-header type-header">
                     Type
                     <br>
-                    <small style="font-weight: normal; font-size: 12pt">Delivery or pickup of food.</small>
+                    <small class="small-desc">Pickup or delivery of food.</small>
                 </h4>
                 <select name="type" class="form-control type-select" required>
                     <option value="pickup">Pickup</option>
@@ -117,7 +117,7 @@
                 <h4 class="foods-header date-header">
                     Schedule Pickup/Delivery Date
                     <br>
-                    <small style="font-weight: normal; font-size: 12pt">Date to pickup or deliver the food.</small>
+                    <small class="small-desc">Date to pickup or deliver the food.</small>
                 </h4>
                 <input type="datetime-local" name="date" class="form-control" placeholder="Schedule pickup or delivery" required>
             </div>

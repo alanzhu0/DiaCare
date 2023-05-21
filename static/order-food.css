@@ -84,3 +84,8 @@ select.type-select {
 .type-container, .type-header {
     background-color:rgb(255, 178, 149);
 }
+
+.small-desc {
+    font-weight: normal; 
+    font-size: 12pt;
+}

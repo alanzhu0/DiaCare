@@ -25,20 +25,11 @@ def base_layout(request):
 
 def index(request):
     if request.user.is_authenticated:
-        return redirect(reverse('home'))
+        return render(request, 'home.html')
     return redirect(reverse('login'))
 
-
 @login_required
-def home(request):
-    context = {
-
-    }
-    return render(request, 'home.html', context)
-
-
-@login_required
-def food(request):
+def order_food(request):
     if request.method == 'POST':
         user = request.user
         order = Order.objects.create(user=user)
@@ -71,7 +62,7 @@ def food(request):
         order.save()
         return redirect(reverse('orders'))
 
-    return render(request, 'food.html', {
+    return render(request, 'order-food.html', {
         "foods": FoodChoice.objects.filter(active=True),
         "produce_categories": ProduceCategory.objects.all(),
     })
@@ -84,7 +75,7 @@ def orders(request):
 
 def login(request):
     if request.user.is_authenticated:
-        return redirect(reverse('home'))
+        return redirect(reverse('index'))
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -98,7 +89,7 @@ def login(request):
         user = authenticate(username=user.email, password=password)
         if user is not None:
             auth_login(request, user)
-            return redirect(reverse('home'))
+            return redirect(reverse('index'))
         return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
 
     return render(request, 'login.html')
@@ -111,7 +102,6 @@ def logout(request):
 
 
 def signup(request):
-
     if request.user.is_authenticated:
         return redirect(reverse('disclaimer'))
 
@@ -168,7 +158,7 @@ def disclaimer(request):
 def questionnaire(request):
     logging.error("jeresfddfre")
     if request.user.is_authenticated:
-        return redirect(reverse('home'))
+        return redirect(reverse('index'))
     if request.method == 'POST':
         for thing in request.POST.dict().keys():
             val = request.POST.dict().get(thing)

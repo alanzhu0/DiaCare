@@ -1,3 +1,36 @@
 nav.navbar {
     background-color: #ffc4c4 !important;
 }
+
+nav .active {
+    background-color: #ff9797 !important;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+nav .profile {
+    position: absolute;
+    right: 30px;
+}
+
+nav .profile > a {
+    color: var(--bs-navbar-active-color);
+    font-weight: bold;
+}
+
+.banner-center {
+    height: 75px;
+    background-color: #87fa87;
+    cursor: pointer;
+    border: 0;
+    font-size: 18pt;
+    font-weight: bold;
+    color: black;
+}
+
+
+@media(max-width: 991px) {
+    nav .profile {
+        position: static;
+    }
+}
