@@ -22,3 +22,9 @@ h5 {
 .card-body .row {
     margin-bottom: 10px;    
 }
+
+.small-desc {
+    font-weight: normal; 
+    font-size: 12pt;
+}
+ 
