@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.conf import settings
 from django.utils import timezone
-from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
-
+from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire
 admin.site.site_header = "DiaCare Administration"
 
 def to_str(obj):
@@ -13,7 +12,14 @@ class UserAdmin(admin.ModelAdmin):
         return obj.is_superuser or obj.is_staff
     admin.boolean = True
     
+    def eligible(obj):
+        return obj.eligible
+    eligible.boolean = True
+    
     to_str.short_description = 'Full Name (First Middle Last)'
+    
+    readonly_fields = ('user_created_at',)
+    
     list_display = (
         to_str,
         'email',
@@ -22,7 +28,8 @@ class UserAdmin(admin.ModelAdmin):
         'dietician',
         'last_clinic_visit',
         'last_food_received',
-        'is_active',
+        'active',
+        eligible,
         admin,
         'patient_comments',
         'medical_comments',
@@ -35,7 +42,7 @@ class UserAdmin(admin.ModelAdmin):
         'dietician',
         'last_clinic_visit',
         'last_food_received',
-        'is_active',
+        'active',
     )
     
     search_fields = (
@@ -161,7 +168,32 @@ class OrderAdmin(admin.ModelAdmin):
     @admin.action(description="Mark selected orders as fulfilled")
     def mark_fulfilled(self, request, queryset):
         queryset.update(date_fulfilled=timezone.now())
+
+
+class ScreeningQuestionnaireAdmin(admin.ModelAdmin):
+    def eligible(obj):
+        return obj.is_eligible
+    eligible.boolean = True
     
+    list_display = (
+        'user',
+        'date_completed',
+        eligible,
+        'c1_q1',
+        'c1_q2',
+        'c2_q1',
+        'c2_q2',
+        'c2_q3',
+        'c2_q4',
+        'c2_q5',
+        'c3_q1',
+        'c3_q2',
+        'c3_q3',
+    )
+    
+    search_fields = (
+        'user',
+    )
 
 admin.site.register(User, UserAdmin)
 
@@ -174,6 +206,8 @@ admin.site.register(ProduceChoice, ProduceChoiceAdmin)
 admin.site.register(ProduceCategory, ProduceCategoryAdmin)
 
 admin.site.register(Order, OrderAdmin)
+
+admin.site.register(ScreeningQuestionnaire, ScreeningQuestionnaireAdmin)
 
 if settings.DEBUG:
     admin.site.register(Food)

@@ -21,7 +21,7 @@
                 .css("margin-bottom", "0")
                 .css("height", el.height() + 100 + "px");
 
-                // Only allow the user to select up to the maximum number of choices
+                {# Only allow the user to select up to the maximum number of choices #}
                 let selectedOptions{{ category.id }};
                 el.on('change', function() {
                     if($(this).find(':selected').length > {{ category.maximum_choices }}) {

@@ -5,7 +5,7 @@
 {% endblock %}
 {% block body %}
     {% block nav %}{% endblock %}
-    <form class="form-signin" action="{% url 'login' %}" method="post">
+    <form class="form-signin" method="post">
         <div class="form-group">
             {% csrf_token %}
             <div id="box">

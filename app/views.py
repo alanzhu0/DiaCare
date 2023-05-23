@@ -11,16 +11,41 @@ from django.shortcuts import render
 from django.db.models import Q
 
 from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
+from .forms import SignupForm, ScreeningQuestionnaireForm
+from .decorators import active_users_only
 
 logger = logging.getLogger(__name__)
 
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'home.html')
-    return redirect(reverse('login'))
+        if request.user.active:
+            return render(request, 'home.html')
+        if request.user.eligible:
+            return render(request, 'eligible.html')
+        if not request.user.completed_screening_questionnaire:
+            return redirect(reverse('screening_questionnaire'))
+        return render(request, 'ineligible.html')
+    
+    # Login
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
-@login_required
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
+
+        user = authenticate(username=user.email, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect(reverse('index'))
+        return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
+
+    return render(request, 'login.html')
+
+@active_users_only
 def order_food(request):
     if request.method == 'POST':
         user = request.user
@@ -96,7 +121,7 @@ def order_food(request):
         "produce_categories": ProduceCategory.objects.all(),
     })  
     
-@login_required
+@active_users_only
 def cancel_order(request):
     if request.method == 'POST':
         order = get_object_or_404(Order, id=request.POST.get('order'))
@@ -120,7 +145,7 @@ def cancel_order(request):
     return redirect(reverse('orders'))
 
 
-@login_required
+@active_users_only
 def orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-number')
     return render(request, 'orders.html', {
@@ -130,99 +155,57 @@ def orders(request):
     })
 
 
-def login(request):
-    if request.user.is_authenticated:
-        return redirect(reverse('index'))
-
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
-
-        user = authenticate(username=user.email, password=password)
-        if user is not None:
-            auth_login(request, user)
-            return redirect(reverse('index'))
-        return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
-
-    return render(request, 'login.html')
-
 
 @login_required
 def logout(request):
     auth_logout(request)
-    return redirect(reverse('login'))
+    messages.success(request, "Successfully logged out.")
+    return redirect(reverse('index'))
 
 
 def signup(request):
     if request.user.is_authenticated:
-        return redirect(reverse('disclaimer'))
-
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        try:
-            user = User.objects.get(email=email)
-            request.doctors = Doctor.objects.all()
-            request.dieticians = Dietician.objects.all()
-
-            return render(request, 'signup.html', {'error': 'User already exists.'})
-        except User.DoesNotExist:
-            pass
-
-        user = User.objects.create(
-            email=email,
-            first_name=request.POST.get('first_name'),
-            last_name=request.POST.get('last_name'),
-            gender=request.POST.get('gender'),
-            address=request.POST.get('address'),
-            doctor=Doctor.objects.get(id=request.POST.get('doctor')),
-            dietician=Dietician.objects.get(id=request.POST.get('dietician')),
-            password=make_password(password),
-        )
-        user.save()
-        
-        request.user = user
-        return redirect(reverse('disclaimer'))
-
-        #auth_login(request, user)
-
-    request.doctors = Doctor.objects.all()
-    request.dieticians = Dietician.objects.all()
-    
-    return render(request, 'signup.html')
-
-
-def disclaimer(request):
-    if request.user.is_authenticated:
-        return redirect(reverse('questionnaire'))
-    if request.method == 'POST':
-        disclaimerval = request.POST.get('disclaimerval')
-        if disclaimerval == 'no':
-            request.doctors = Doctor.objects.all()
-
-            return render(request, 'signup.html', {'error': 'Please accept the disclaimer to sign up.'})
-        else:
-            return redirect(reverse('questionnaire'))
-    return render(request, 'disclaimer.html')
-
-
-def questionnaire(request):
-    logging.error("jeresfddfre")
-    if request.user.is_authenticated:
         return redirect(reverse('index'))
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect(reverse('index'))
+        return render(request, 'signup.html', {'form': form})
+    
+    form = SignupForm()
+    return render(request, 'signup.html', {'form': form})
+
+@login_required
+def screening_questionnaire(request):
+    if request.user.active or request.user.completed_screening_questionnaire:
+        return redirect(reverse('index'))
+
     if request.method == 'POST':
-        for thing in request.POST.dict().keys():
-            val = request.POST.dict().get(thing)
+        form = ScreeningQuestionnaireForm(request.POST)
+        if form.is_valid():
+            questionnaire = form.save(commit=False)
+            questionnaire.user = request.user
+            questionnaire = form.save()
+            return redirect(reverse('index'))
+        logging.error(form.errors)
+        return render(request, 'screening_questionnaire.html', {'form': form})
 
-            if val == '1':
-                return render(request, 'login.html', {'message': 'You are eligible for DiaCare! Please sign in with the account you created to continue.'})
-        request.doctors = Doctor.objects.all()
+    form = ScreeningQuestionnaireForm()
+    return render(request, 'screening_questionnaire.html', {'form': form})
+    
+    # if request.method == 'POST':
+    #     for thing in request.POST.dict().keys():
+    #         val = request.POST.dict().get(thing)
 
-        return render(request, 'signup.html', {'error': 'You do not qualify for the program.'})
-    return render(request, 'questionnaire.html')
+    #         if val == '1':
+    #             return render(request, 'login.html', {'message': 'You are eligible for DiaCare! Please sign in with the account you created to continue.'})
+    #     request.doctors = Doctor.objects.all()
+
+    #     return render(request, 'signup.html', {'error': 'You do not qualify for the program.'})
+    # return render(request, 'questionnaire.html')
+
+@active_users_only
+def profile(request):
+    return render(request, 'profile.html')

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+  <link href="{% static 'signup.css' %}" rel="stylesheet">
+  <link href="{% static 'screening-questionnaire.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}
+  DiaCare - Screening Questionnaire
+{% endblock %}
+
+{% block nav %}{% endblock %}
+
+{% block body %}
+<div class="container">
+  <br>
+  <img class="mb-4 logo" height="100" src="{% static 'images/logo_transparent.png' %}" alt="Diacare Logo">
+  <h1>Screening Questionnaire</h1>
+  <div>
+    <h5>Welcome, {{ request.user.first_name }}!</h5>
+    To continue the signup process, please answer the following questions to help us 
+    determine if you are eligible for the Food Pharmacy program.
+    <hr>
+  </div>
+  {% crispy form %}
+  <br>
+</div>
+{% endblock %}

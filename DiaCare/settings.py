@@ -70,7 +70,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'pwa',
+    'address',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -103,8 +109,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DiaCare.wsgi.application'
 
-LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = '/home'
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL = '/'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

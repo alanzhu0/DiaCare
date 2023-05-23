@@ -13,6 +13,8 @@
         <script src="https://kit.fontawesome.com/4ca1ff7e0a.js" crossorigin="anonymous"></script>
 
         <link rel="stylesheet" href="{% static 'base.css' %}">
+        {% block head %}
+        {% endblock %}
         {% block css %}
         {% endblock %}
      </head>
@@ -46,7 +48,14 @@
                     {{ request.user }}
                   </a>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">
+                      <i class="fas fa-user"></i>
+                      Profile
+                    </a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">
+                      <i class="fas fa-sign-out-alt"></i>
+                      Logout
+                    </a></li>
                   </ul>
                 </li>
               </ul>

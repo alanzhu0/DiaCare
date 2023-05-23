@@ -1,110 +1,67 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
+
 {% block css %}
   <link href="{% static 'signup.css' %}" rel="stylesheet">
 {% endblock %}
-{% block body %}
-  {% block nav %}{% endblock %}
-  <form class="form-signin" action="{% url 'signup' %}" method="POST">
-  {% csrf_token %}
-  <section class="h-100 bg-dark">
-    <div class="container py-5 h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col">
-          <div class="card card-registration my-4">
-            <div class="row g-0">
-              <div class="col-xl-6 d-none d-xl-block">
-                <img 
-                  id="left_img"
-                  src="{% static 'images/hospital1.jpg' %}"
-                  alt="Sample photo" class="img-fluid"
-                  style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;" 
-                  height="500px"
-                  />
-              </div>
-              <div class="col-xl-6">
-                <div class="card-body p-md-5 text-black">
-                  <img src="{% static 'images/logo_transparent.png' %}" height="100px">
-                  <br><br>
-                  <h3 class="mb-5">DiaCare Signup</h3>
-  
-                  <div class="row">
-                    <div class="col-md-6 mb-4">
-                      <div class="form-outline">
-                        <input type="first_name" id="first_name" name="first_name" class="form-control form-control-lg" placeholder="First Name"/>
-                      </div>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                      <div class="form-outline">
-                        <input type="last_name" id="last_name" name="last_name" class="form-control form-control-lg" placeholder="Last Name"/>
-                      </div>
-                    </div>
-                  </div>
-  
-                  <div class="form-outline mb-4">
-                    <input type="email" id="email" name="email" class="form-control form-control-lg" placeholder="Email Address"/>
-                  </div>
 
-                  <div class="form-outline mb-4">
-                    <input type="password" id="password" name="password" class="form-control form-control-lg" placeholder="Password"/>
-                  </div>
-  
-                  <div class="form-outline mb-4">
-                    <input type="address" id="address" name="address", class="form-control form-control-lg" placeholder="Address"/>
-                  </div>
-  
-                  <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
-  
-                    <h6 class="mb-0 me-4">Gender: </h6>
-  
-                    <select name="gender" id="gender">
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Non-Binary</option>
-                    </select>
-  
-                  </div>
-  
-                  <div class="form-outline mb-4">
-                    <input type="text" id="form3Example9" class="form-control form-control-lg" placeholder="Date of Birth" />
-                  </div>
-<!--   
-                  <div class="form-outline mb-4">
-                    <input type="doctor" id="doctor" name="doctor" class="form-control form-control-lg" placeholder="Doctor Name" />
-                  </div> -->
-
-                  <h6 class="mb-0 me-4">Select your doctor: </h6>
-                  <select name="doctor" id="doctor">
-                  {% for doctor in request.doctors %}
-                    <option  name="doctor" value="{{ doctor.id }}"> {{ doctor }} <br>
-                  {% endfor %}
-                  </select>
-                  <br><br>
-                  <h6 class="mb-0 me-4">Select your dietician: </h6>
-                  <select name="dietician" id="dietician">
-                    {% for dietician in request.dieticians %}
-                      <option name="dietician" value="{{ dietician.id }}"> {{ dietician }} <br>
-                    {% endfor %}
-                  </select>
-
-
-                  <div class="d-flex justify-content-end pt-3">
-                    <button type="submit" class="btn btn-success btn-lg ms-2">Submit form</button>
-                  </div>
-  
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </form>
-  {% if error %}
-  <br><br>
-  <div class="alert alert-danger" role="alert">
-      {{ error }}
-  </div>
-{% endif %}
-  </section>
+{% block title %}
+  Diacare - Signup
 {% endblock %}
+
+{% block body %}
+{% block nav %}{% endblock %}
+<div class="container">
+  <br>
+  <img class="mb-4 logo" height="100" src="{% static 'images/logo_transparent.png' %}" alt="Diacare Logo">
+  <h1>Sign up for DiaCare</h1>
+  
+  <div>
+    <b>Already have an account?</b>
+    <a href="{% url 'index' %}">Login instead.</a>
+    <hr>
+  </div>
+
+  <div>
+    <h5>About the Food Pharmacy App</h5>
+      The Food Pharmacy program at Children's National Hospital supports families of 
+      patients of Children’s National's Diabetes Program facing food insecurity by 
+      providing healthy and nutritious food options as part of their treatment plan.
+      The Food Pharmacy App enables patients to order food
+      and view account information for the Food Pharmacy Program from a web portal and mobile app. 
+      <br><br>
+      Access to the Food Pharmacy program is only available to patients of Children’s 
+      National's Diabetes Program who have been referred by their provider. If you
+      have not been referred to the Food Pharmacy program, please contact your provider 
+      to learn more. 
+    <hr>
+  </div>
+
+  <div>
+    <h5>Signup Process Overview</h5>
+      <ol>
+        <li>Create an account by filling out the form below with your information.</li>
+        <li>Verify your email address by clicking the link in the email we send you.</li>
+        <li>Take a questionnaire to determine your eligibility for the Food Pharmacy program.</li>
+        <li>If eligible, Food Pharmacy staff or your provider will approve your account.</li>
+        <li>After being approved, you can get started with the Food Pharmacy App and order food from the Food Pharmacy program!</li>
+      </ol>
+    <hr>
+  </div>
+  
+  {% crispy form %}
+
+  {% for error in errors %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+  {% endfor %}
+  <br>
+</div>
+{% endblock %}
+
+
+{% comment %} {% block js %}
+  <script src="{% static 'signup.js' %}"></script>
+{% endblock %} {% endcomment %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav %}{% endblock %}
+{% block body %}
+<div class="container">
+    <br>
+    <h1 class="text-success">You're Eligible!</h1>
+    <h4>Access Pending Approval</h4>
+    <hr>
+    <p>
+        <b>Good news! You're eligible for the Food Pharmacy program.</b>
+        <br>
+        Your account is currently pending approval by Children's National staff.
+        Please contact your doctor or dietician if your request is not approved
+        within a few days.
+        <br><br>
+        You will receive an email when your account is approved.
+        Once approved, you will be able to start using the Food Pharmacy App and order food.
+        <br><br>
+        We look forward to seeing you at the Food Pharmacy!
+    </p>
+
+    <hr>
+    Logged in as: <b>{{ request.user }}</b>. <a href="{% url 'logout' %}">Logout</a>
+    <hr>
+</div>
+<br><br><br><br><br><br><br><br><br>
+{% endblock %}
