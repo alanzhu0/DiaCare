@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.db.models import Q
 
 from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
-from .forms import SignupForm, ScreeningQuestionnaireForm
+from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm
 from .decorators import active_users_only
 
 logger = logging.getLogger(__name__)
@@ -208,4 +208,14 @@ def screening_questionnaire(request):
 
 @active_users_only
 def profile(request):
-    return render(request, 'profile.html')
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully updated profile.")
+            return redirect(reverse('profile'))
+        print(form.errors)
+        return render(request, 'profile.html', {'form': form}) 
+    
+    form = ProfileForm(instance=request.user)
+    return render(request, 'profile.html', {'form': form})

@@ -4,12 +4,13 @@ from django.contrib.auth.password_validation import validate_password
 from django.utils.safestring import mark_safe
 from django.contrib.auth.forms import UserCreationForm
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, Row, Column, HTML, Field, Div
+from crispy_forms.layout import Layout, Fieldset, Submit, Row, Column, HTML, Field, Div, Button
 from crispy_forms.bootstrap import PrependedText, InlineRadios
 from .models import User, ScreeningQuestionnaire
 from address.forms import AddressField
 
 
+   
 class ScreeningQuestionnaireForm(forms.ModelForm):
     accept_privacy_policy = forms.BooleanField(required=True)
     accept_privacy_policy.label = mark_safe(
@@ -124,4 +125,69 @@ class SignupForm(forms.ModelForm):
             'address',
             'doctor',
             'dietician',
+        ]
+    
+    
+class ProfileForm(forms.ModelForm):
+    email = forms.EmailField(disabled=True, required=False)
+    first_name = forms.CharField(disabled=True, required=False)
+    middle_name = forms.CharField(disabled=True, required=False)
+    last_name = forms.CharField(disabled=True, required=False)
+    patient_comments = forms.CharField(widget=forms.Textarea, required=False, label='Comments', help_text='Enter any comments you would like to share with Food Pharmacy staff.')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()    
+        self.helper.form_class = 'needs-validation'
+        self.helper.attrs = {'novalidate': ''}
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Fieldset(
+                'Login Information',
+                Field('email'),
+                HTML(
+                    """
+                    <a href="" class="btn btn-primary" style="margin-bottom: 10px">
+                        <i class="fas fa-key"></i>&nbsp;
+                        Change Password
+                    </a>
+                    """
+                )
+            ),
+            Fieldset(
+                'Personal Information',
+                Row(
+                    Column('first_name'),
+                    Column('middle_name'),
+                    Column('last_name'),
+                ),
+                'gender',
+                'address',
+            ),
+            Fieldset(
+                'Medical Information',
+                Row(
+                    Column('doctor'),
+                    Column('dietician'),
+                ),
+            ),
+            Fieldset(
+                'Other Information',
+                'patient_comments',
+            ),
+            Submit('submit', 'Edit Profile')
+        )
+    
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'gender',
+            'address',
+            'doctor',
+            'dietician',
+            'patient_comments'
         ]

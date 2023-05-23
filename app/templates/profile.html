@@ -1,12 +1,21 @@
 {% extends "base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
     DiaCare - Profile
 {% endblock %}
 
 {% block css %}
-    <link href="{% static 'profile.css' %}" rel="stylesheet">
+    <link href="{% static 'signup.css' %}" rel="stylesheet">
+    <style>
+        .asteriskField {
+            display: none;
+        }
+        input[type="submit"] {
+            margin-top: 10px;
+        }
+    </style>
 {% endblock %}
 
 
@@ -14,6 +23,9 @@
 <div class="container">
 <br>
 <h1>Profile</h1>
-
+    <p>View and edit your Food Pharmacy profile.</p>
+    <hr>
+    {% crispy form %}
+    <br>
 </div>
 {% endblock %}

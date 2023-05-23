@@ -30,7 +30,7 @@
                         let msg = $(".messages").append(`
                             <div class='alert alert-danger alert-dismissable' style="display:none" id='${id}'>
                                 <i class='fa-solid fa-triangle-exclamation'></i> 
-                                You may only select up to {{ category.maximum_choices }} items for the {{ category }} category.  
+                                You may only select up to {{ category.maximum_choices }} items from the {{ category }} category.  
                                 <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div></div>
                         `);
                         setTimeout(function() {
