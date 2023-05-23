@@ -12,6 +12,16 @@
 {% block js %}
     <script>
         $(function () {
+            let datePickerInitialized = false;
+            $("input[type='datetime-local']").focus(function() {
+                try {
+                    document.querySelector("input[type='datetime-local']").showPicker();
+                }
+                catch(e) {
+                    console.log(e);
+                }
+            });
+
             let el, next;
             let counter = 0;
             {% for category in produce_categories %}
