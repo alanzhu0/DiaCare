@@ -1,21 +1,10 @@
-html {
-    background-color: pink;
+fieldset {
+    margin-top: 10px;
+    border-bottom: var(--bs-border-width) solid var(--bs-gray-400);
 }
-.card-registration .select-input.form-control[readonly]:not([disabled]) {
-    font-size: 1rem;
-    line-height: 2.15;
-    padding-left: .75em;
-    padding-right: .75em;
-}
-.card-registration .select-arrow {
-    top: 13px;
-}
-.form-check {
-    padding-left: 1cm;
-}
-.form-label {
-    position:relative;
-}
-#left_img {
-    height:780px !important;
+
+#div_id_accept_privacy_policy {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: var(--bs-border-width) solid var(--bs-gray-400);
 }
