@@ -62,6 +62,6 @@
 {% endblock %}
 
 
-{% comment %} {% block js %}
-  <script src="{% static 'signup.js' %}"></script>
-{% endblock %} {% endcomment %}
+{% block js %}
+  {% include 'google-maps-address-complete.html' %}
+{% endblock %}

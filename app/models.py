@@ -3,7 +3,6 @@ from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.db import models
 from django.utils import timezone
 
-from address.models import AddressField
 
 
 # Create your models here.
@@ -35,7 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text="Whether the user is currently enrolled in the Food Pharmacy program and is authorized to log in and order food.", 
     )
     
-    address = AddressField(null=True)
+    address = models.CharField(max_length=512)
 
     doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE)
     dietician = models.ForeignKey('Dietician', on_delete=models.CASCADE)

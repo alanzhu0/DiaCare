@@ -7,7 +7,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Row, Column, HTML, Field, Div, Button
 from crispy_forms.bootstrap import PrependedText, InlineRadios
 from .models import User, ScreeningQuestionnaire
-from address.forms import AddressField
 
 
    
@@ -63,7 +62,6 @@ class ScreeningQuestionnaireForm(forms.ModelForm):
 
 
 class SignupForm(forms.ModelForm):
-    address = AddressField()
     password = forms.CharField(widget=forms.PasswordInput)
     accept_privacy_policy = forms.BooleanField(required=True)
     accept_privacy_policy.label = mark_safe(

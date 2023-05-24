@@ -6,7 +6,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("app", "0033_user_address"),
+        ("app", "0032_delete_feed_remove_user_address"),
     ]
 
     operations = [

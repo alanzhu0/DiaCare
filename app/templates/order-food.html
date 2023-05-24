@@ -61,9 +61,7 @@
                     .css("position", "relative")
                     .css("left", "74%")
                     .css("bottom", next.height())
-                    {% comment %} .parent()
-                    .css("margin-bottom", next.height() * -1);
-                    .css("height", next.height() + 100 + "px"); {% endcomment %}
+                    {% comment %} .parent().css("margin-bottom", next.height() * -1).css("height", next.height() + 100 + "px"); {% endcomment %}
                     $('.select-{{ category.id }} option').each(function() {
                         $(this).text($(this).text().trim().replace(/\([^)]*\)$/g, "").trim());
                     });
