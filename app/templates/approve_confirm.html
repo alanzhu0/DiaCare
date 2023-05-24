@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav %}{% endblock %}
+{% block body %}
+<div class="container">
+    <br>
+    <h1 class="text-success">Confirm Approval</h1>
+    <hr>
+    <p>
+        <h5>Are you sure you want to approve <b>{{ approve_user }}</b>'s request to register for the Food Pharmacy App?</h5>
+
+        <b>Email:</b> {{ approve_user.email }}<br>
+        <b>Gender:</b> {{ approve_user.gender }}<br>
+        <b>Address:</b> {{ approve_user.address }}<br>
+        <b>Doctor:</b> {{ approve_user.doctor }}<br>
+        <b>Dietician:</b> {{ approve_user.dietician }}<br>
+        <b>Account created:</b> {{ approve_user.user_created_at }}<br>
+        <hr>
+        <button class="btn btn-success" id="approve">Approve</button>
+    </p>
+</div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock %}
+
+{% block js %}
+<script>
+    $(function() {
+        $("#approve").click(function() {
+            window.location.href  = window.location.href + "&approve=1";
+        });
+    });
+</script>
+{% endblock %}

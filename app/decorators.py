@@ -10,3 +10,12 @@ def active_users_only(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
+
+def admin_only(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+            return function(request, *args, **kwargs)
+        return redirect(reverse('index'))
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap

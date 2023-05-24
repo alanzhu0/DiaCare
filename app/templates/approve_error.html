@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav %}{% endblock %}
+{% block body %}
+<div class="container">
+    <br>
+    {% if approve_user.active %}
+        <h1 class="text-success">Already Approved</h1>
+    {% else %}
+        <h1 class="text-danger">Error</h1>
+    {% endif %}
+    <hr>
+    <p>
+        {% if approve_user.active %}
+            <b>{{ approve_user }}</b> has already been approved to use the Food Pharmacy App. No further action is required.
+        {% else %}
+            This approval link is invalid or has expired. Please contact a Food Pharmacy administrator for assistance.
+        {% endif %}
+    </p>
+</div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock %}

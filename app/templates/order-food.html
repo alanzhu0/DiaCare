@@ -82,6 +82,18 @@
         <h1>Order Food</h1>
         <p>Place an order for food from Children's National's Food Pharmacy.</p>
     {% endif %}
+
+    {% if request.user.large_household %}
+        <p class="text-success">
+            <i class="fa-solid fa-check"></i>&nbsp;
+            <b>You have been identified as supporting a large household.</b>
+            <br>
+            You are eligible to receive two sets of food and produce.
+            When you receive your order, you will get double the amount of food and produce you order on this form.
+        </p>
+    {% endif %}
+
+
     {% if error %}
         <div class="alert alert-danger">
             {{ error }}

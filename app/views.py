@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -19,9 +20,12 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 
 
-from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, EmailVerificationLink, ScreeningQuestionnaire
+from .models import (
+    User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, ScreeningQuestionnaire,
+    Order, EmailVerificationLink, AccountApprovalLink, PasswordResetLink,
+)
 from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm
-from .decorators import active_users_only
+from .decorators import active_users_only, admin_only
 from .helpers import send_email
 
 logger = logging.getLogger(__name__)
@@ -200,7 +204,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
-            return redirect(reverse('index'))
+            return redirect(reverse('index'))  # Should go to verify_email. Redirect to index to make sure logic is good.
         return render(request, 'signup.html', {'form': form})
     
     form = SignupForm()
@@ -217,17 +221,22 @@ def verify_email(request):
     
     if request.GET.get("token"):
         try:
-            verification_link = EmailVerificationLink.objects.get(token=request.GET.get("token"), valid=True, user=request.user)
-        except EmailVerificationLink.DoesNotExist:
+            verification_link = EmailVerificationLink.objects.get(token=request.GET.get("token"), user=request.user)
+        except (EmailVerificationLink.DoesNotExist, ValidationError):
             messages.error(request, "Invalid verification link.")
             return render(request, 'verify_email.html')
+        
+        if not verification_link.is_valid:
+            messages.error(request, "Invalid verification link.")
+            return render(request, 'verify_email.html')
+        
         request.user.email_verified = True
         request.user.save()
         verification_link.valid = False
         verification_link.save()
         
         messages.success(request, "Your email address has been verified.")
-        return redirect(reverse('index'))
+        return redirect(reverse('index'))  # Should go to screening_questionnaire. Redirect to index to make sure logic is good.
     
     if request.GET.get("resend") or not EmailVerificationLink.objects.filter(user=request.user).exists():
         if EmailVerificationLink.objects.filter(
@@ -243,19 +252,13 @@ def verify_email(request):
         
         send_email(
             "Children's National Food Pharmacy App: Verify your email address",
-            f"""
-            Hi {request.user.first_name},
-            
-            You recently signed up for the Children's National Food Pharmacy App. If this was you, please click the link below to verify your email address:
-            {settings.MY_HOST}{reverse('verify_email')}?token={verification_link.token}
-            
-            If you did not sign up for the Food Pharmacy App, please ignore this email.
-            
-            Thank you,
-            Food Pharmacy App Team
-            Children's National Hospital
-            111 Michigan Avenue NW, Washington, DC.
-            www.childrensnational.org
+            f"""\
+Hi {request.user.first_name},
+
+You recently signed up for the Children's National Food Pharmacy App. If this was you, please click the link below to verify your email address:
+{settings.MY_HOST}{reverse('verify_email')}?token={verification_link.token}
+
+If you did not sign up for the Food Pharmacy App, please ignore this email.
             """,
             request.user.email,
         )
@@ -265,9 +268,89 @@ def verify_email(request):
     return render(request, 'verify_email.html')
     
     
+@login_required
+def screening_questionnaire(request):
+    if request.user.active or request.user.completed_screening_questionnaire:
+        return redirect(reverse('index'))
+
+    if request.method == 'POST':
+        form = ScreeningQuestionnaireForm(request.POST)
+        if form.is_valid():
+            questionnaire = form.save(commit=False)
+            questionnaire.user = request.user
+            questionnaire = form.save()
+            
+            if request.user.eligible:
+                approve_link = AccountApprovalLink.objects.create(user=request.user)
+                send_email(
+                    f"Food Pharmacy App: Account Approval Request from {request.user}",
+                    f"""\
+Hello,
+
+{request.user} ({request.user.email}) has requested approval for registering an account on the Children's National Food Pharmacy App.
+You are receiving this email because the patient was identified as eligible for the Food Pharmacy Program and has specified you as their doctor or dietician.
+
+To approve this account, click the link below:
+{settings.MY_HOST}{reverse('approve_account')}?token={approve_link.token}
+
+Please ignore this email if you do not wish to approve this account.         
+                    """,
+                    [request.user.doctor.email, request.user.dietician.email] + [u.email for u in User.objects.filter(Q(is_superuser=True) | Q(is_staff=True))] + settings.ADMIN_EMAILS,
+                )
+                
+            return redirect(reverse('index'))  # Should go to eligible or ineligible. Redirect to index to make sure logic is good.
+        logging.error(form.errors)
+        return render(request, 'screening_questionnaire.html', {'form': form})
+
+    form = ScreeningQuestionnaireForm()
+    return render(request, 'screening_questionnaire.html', {'form': form})
 
 
+def approve_account(request):
+    if request.GET.get("approve") and request.GET.get("token"):
+        try:
+            approval_link = AccountApprovalLink.objects.get(token=request.GET.get("token"))
+        except (AccountApprovalLink.DoesNotExist, ValidationError):
+            return render(request, 'approve_error.html')
+        if approval_link.is_valid:
+            approval_link.valid = False
+            approval_link.save()
+            
+            approval_link.user.active = True
+            approval_link.user.save()
+            
+            send_email(
+                "Children's National Food Pharmacy App: Account Approved",
+                f"""\
+Hi {approval_link.user.first_name},
 
+Your account for the Children's National Food Pharmacy App has been approved. 
+You can now login to the app at diacare.tech using your email address and the password you created when you signed up and begin using the app to place food orders.
+
+If you have any questions, please contact your doctor or dietician. We look forward to seeing you at the Food Pharmacy!
+                """,
+                approval_link.user.email,
+            )
+            
+            return render(request, 'approved.html', {'approve_user': approval_link.user})
+        return render(request, 'approve_error.html', {'approve_user': approval_link.user})
+        
+    if request.GET.get("token"):
+        try:
+            approval_link = AccountApprovalLink.objects.get(token=request.GET.get("token"))
+        except (AccountApprovalLink.DoesNotExist, ValidationError):
+            return render(request, 'approve_error.html')
+        
+        if not approval_link.is_valid:
+            return render(request, 'approve_error.html', {'approve_user': approval_link.user})
+        return render(request, 'approve_confirm.html', {'approve_user': approval_link.user})
+    
+    return redirect(reverse('index'))
+
+
+### ADMINISTRATION ###
+
+@admin_only
 def csv_questionnaire(request):
     dict_list = []
     
@@ -280,21 +363,6 @@ def csv_questionnaire(request):
         for question in s.QUESTION_STRS:
             answer = getattr(s, question)
             answer_dict[s.QUESTION_STR_TO_OBJ_MAP.get(question).verbose_name] = dict(s.QUESTION_STR_TO_OBJ_MAP.get(question).get_choices(question)).get(answer)
-            # if answer.choice:
-            #     answer_dict[question] = answer.
-            # elif answer.answer:
-            #     answer_dict[question] = answer.answer
-            # elif answer.clear_vote:
-            #     answer_dict[question] = "Cleared"
-            # else:
-            #     answer_dict[question] = "None"
-            # logger.error()
-            logger.error(dict(s.QUESTION_STR_TO_OBJ_MAP.get(question).get_choices(question)))
-            # logger.error(answer.verbose_name)
-            # answer_dict[answer.verbose_name] = str(answer.choices)
-            # # logger.error(answer.get_choices(answer))
-            # logger.error(answer.choice)
-
             
         dict_list.append(answer_dict)
 
@@ -304,25 +372,3 @@ def csv_questionnaire(request):
     w.writerows(dict_list)
     return response
 
-
-
-
-
-@login_required
-def screening_questionnaire(request):
-    if request.user.active or request.user.completed_screening_questionnaire:
-        return redirect(reverse('index'))
-
-    if request.method == 'POST':
-        form = ScreeningQuestionnaireForm(request.POST)
-        if form.is_valid():
-            questionnaire = form.save(commit=False)
-            questionnaire.user = request.user
-            questionnaire = form.save()
-            return redirect(reverse('index'))
-        logging.error(form.errors)
-        return render(request, 'screening_questionnaire.html', {'form': form})
-
-    form = ScreeningQuestionnaireForm()
-    return render(request, 'screening_questionnaire.html', {'form': form})
-    return render(request, 'screening_questionnaire.html', {'form': form})

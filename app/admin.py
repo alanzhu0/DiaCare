@@ -1,7 +1,12 @@
 from django.contrib import admin
+from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
 from django.conf import settings
 from django.utils import timezone
-from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire, EmailVerificationLink
+from .models import (
+    User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire, 
+    EmailVerificationLink, PasswordResetLink, AccountApprovalLink
+)
 admin.site.site_header = "DiaCare Administration"
 
 def to_str(obj):
@@ -15,6 +20,10 @@ class UserAdmin(admin.ModelAdmin):
     def eligible(obj):
         return obj.eligible
     eligible.boolean = True
+    
+    def large_household(obj):
+        return obj.large_household
+    large_household.boolean = True
     
     to_str.short_description = 'Full Name (First Middle Last)'
     
@@ -31,6 +40,7 @@ class UserAdmin(admin.ModelAdmin):
         'active',
         eligible,
         admin,
+        large_household,
         'patient_comments',
         'medical_comments',
         'admin_comments',
@@ -175,10 +185,15 @@ class ScreeningQuestionnaireAdmin(admin.ModelAdmin):
         return obj.is_eligible
     eligible.boolean = True
     
+    def large_household(obj):
+        return obj.large_household
+    large_household.boolean = True
+    
     list_display = (
         'user',
         'date_completed',
         eligible,
+        large_household,
         'c1_q1',
         'c1_q2',
         'c2_q1',
@@ -194,14 +209,27 @@ class ScreeningQuestionnaireAdmin(admin.ModelAdmin):
     search_fields = (
         'user',
     )
+    
+    actions = ('download_csv',)
+    
+    @admin.action(description="Download questionnaire responses as CSV (Excel spreadsheet)")
+    def download_csv(self, request, queryset):
+        return redirect(reverse('download_questionnaire'))
 
 
-class EmailVerificationLinkAdmin(admin.ModelAdmin):
+class SecureLinkAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'time_created',
+        'valid'
+    )
+
+class EmailVerificationLinkAdmin(SecureLinkAdmin):
     list_display = (
         'user',
         'email',
         'time_created',
-        'valid'
+        'valid',
     )
 
 admin.site.register(User, UserAdmin)
@@ -219,6 +247,10 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(ScreeningQuestionnaire, ScreeningQuestionnaireAdmin)
 
 admin.site.register(EmailVerificationLink, EmailVerificationLinkAdmin)
+
+admin.site.register(PasswordResetLink, SecureLinkAdmin)
+
+admin.site.register(AccountApprovalLink, SecureLinkAdmin)
 
 if settings.DEBUG:
     admin.site.register(Food)

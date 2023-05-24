@@ -72,6 +72,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def eligible(self):
         """Returns whether the user is eligible for the Food Pharmacy program."""
         return self.screening_questionnaire.is_eligible if hasattr(self, 'screening_questionnaire') else False
+    
+    @property
+    def large_household(self):
+        return self.screening_questionnaire.large_household if hasattr(self, 'screening_questionnaire') else False
+    
 
     def __str__(self):
         return f"{self.first_name} {self.middle_name + ' ' if self.middle_name else ''}{self.last_name}"
@@ -79,7 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Doctor(models.Model):
     name = models.CharField(max_length=255)
-    email = models.EmailField(blank=True)
+    email = models.EmailField()
     phone = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
@@ -93,7 +98,7 @@ class Doctor(models.Model):
 
 class Dietician(models.Model):
     name = models.CharField(max_length=255)
-    email = models.EmailField(blank=True)
+    email = models.EmailField()
     phone = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
@@ -265,7 +270,7 @@ class ScreeningQuestionnaire(models.Model):
         ("1_cows_milk", "1% Cow's Milk"),
     ), max_length=255, verbose_name="Which type of milk do you prefer?")
     
-    c3_q3 = models.CharField(choices=(
+    c3_q3 = models.CharField(choices=(  # DO NOT CHANGE THIS WITHOUT LOOKING AT large_household()
         ("1", "1"),
         ("2", "2"),
         ("3", "3"),
@@ -303,19 +308,37 @@ class ScreeningQuestionnaire(models.Model):
     def is_eligible(self):
         """Returns whether the response to this questionnaire indicates that the user is eligible for the Food Pharmacy program"""
         return any([getattr(self, q) in ("often", "sometimes") for q in self.QUESTIONS_DETERMINING_ELIGIBILITY])
+
+    @property
+    def large_household(self):
+        """Returns whether the user has a large household"""
+        return self.c3_q3 in ("5", "6", "7", "8_or_more")
     
     class Meta:
         ordering = ['-date_completed']
 
 
-class EmailVerificationLink(models.Model):
-    token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField()
+class SecureLink(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
     valid = models.BooleanField(default=True)
     time_created = models.DateTimeField(auto_now_add=True)
+    
+    hours_valid = 24
 
     @property
     def is_valid(self):
-        return self.valid and timezone.now() - timedelta(hours=24) <= self.time_created <= timezone.now()
+        return self.valid and timezone.now() - timedelta(hours=self.hours_valid) <= self.time_created <= timezone.now()
+    
+    class Meta:
+        ordering = ['-time_created']
+
+class EmailVerificationLink(SecureLink):
+    email = models.EmailField()
+    
+class PasswordResetLink(SecureLink):
+    hours_valid = 1
+
+class AccountApprovalLink(SecureLink):
+    hours_valid = 2190  # 3 months

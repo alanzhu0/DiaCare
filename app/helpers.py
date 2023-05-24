@@ -4,6 +4,16 @@ from django.conf import settings
 
 def send_email(subject, message, to):
     """Helper function to send an email"""
+    message += """
+    
+Thank you,
+Food Pharmacy App Team
+Children's National Hospital
+111 Michigan Avenue NW, Washington, DC.
+childrensnational.org
+diacare.tech
+    """
+    
     send_mail(
         subject,
         message,

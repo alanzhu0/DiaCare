@@ -199,6 +199,10 @@ EMAIL_HOST_PASSWORD = ""  # password associated with above email-id
 # No trailing slash
 MY_HOST = "https://diacare.tech"
 
+ADMIN_EMAILS = [
+    "support@diacare.tech"
+]
+
 
 try:
     from .secret import *

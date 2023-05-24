@@ -44,6 +44,24 @@ footer {
     right: 15px;
 }
 
+.goog-te-combo {
+    background-color: rgb(245, 245, 245);
+    text-align: center;
+    align-content: center;
+  }
+
+div#google_translate_element {
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+.translate {
+background-color: rgb(245, 245, 245);
+align-items: center;
+align-self: center;
+align-content: center;
+}
 
 @media(max-width: 991px) {
     nav .profile {
