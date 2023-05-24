@@ -11,4 +11,6 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('signup/screening-questionnaire', views.screening_questionnaire, name='screening_questionnaire'),
     path('profile', views.profile, name='profile'),
+    path('downloads/', views.csv_questionnaire, name='questionnaire')
+    
 ]

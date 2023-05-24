@@ -1,5 +1,9 @@
 import logging
+import csv
+from django import http
 
+
+from collections import OrderedDict
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.hashers import make_password
@@ -10,7 +14,8 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.db.models import Q
 
-from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order
+
+from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire
 from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm
 from .decorators import active_users_only
 
@@ -176,6 +181,49 @@ def signup(request):
     
     form = SignupForm()
     return render(request, 'signup.html', {'form': form})
+
+
+
+
+def csv_questionnaire(request):
+    dict_list = []
+    
+    for s in ScreeningQuestionnaire.objects.all():
+        answers = s.QUESTION_OBJS
+        answer_dict = OrderedDict()
+        answer_dict["Name"] = s.user.first_name + " " + s.user.last_name
+        answer_dict["Email"] = s.user.email
+        answer_dict["Date"] = s.date_completed.strftime("%Y-%m-%d %H:%M:%S")
+        for question in s.QUESTION_STRS:
+            answer = getattr(s, question)
+            answer_dict[s.QUESTION_STR_TO_OBJ_MAP.get(question).verbose_name] = dict(s.QUESTION_STR_TO_OBJ_MAP.get(question).get_choices(question)).get(answer)
+            # if answer.choice:
+            #     answer_dict[question] = answer.
+            # elif answer.answer:
+            #     answer_dict[question] = answer.answer
+            # elif answer.clear_vote:
+            #     answer_dict[question] = "Cleared"
+            # else:
+            #     answer_dict[question] = "None"
+            # logger.error()
+            logger.error(dict(s.QUESTION_STR_TO_OBJ_MAP.get(question).get_choices(question)))
+            # logger.error(answer.verbose_name)
+            # answer_dict[answer.verbose_name] = str(answer.choices)
+            # # logger.error(answer.get_choices(answer))
+            # logger.error(answer.choice)
+
+            
+        dict_list.append(answer_dict)
+
+    response = http.HttpResponse(content_type="text/csv")
+    w = csv.DictWriter(response, dict_list[0].keys())
+    w.writeheader()
+    w.writerows(dict_list)
+    return response
+
+
+
+
 
 @login_required
 def screening_questionnaire(request):

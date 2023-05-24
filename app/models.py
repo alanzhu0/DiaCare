@@ -248,8 +248,6 @@ class ScreeningQuestionnaire(models.Model):
     c2_q3 = models.CharField(choices=c2_choices, max_length=255, verbose_name="We couldn't afford to eat balanced meals (protein with starch, fruits/vegetables at each meal for the entire family).")
     c2_q4 = models.CharField(choices=c2_choices, max_length=255, verbose_name="We (you or other adults in your household) have had to cut the size of our meals or skip meals because there wasn't enough money for food.")
     c2_q5 = models.CharField(choices=c2_choices, max_length=255, verbose_name="We often choose prepackaged food over fresh due to price.")
-    
-    
     ## Category 3
     c3_label = "Other Information"
     
@@ -290,6 +288,9 @@ class ScreeningQuestionnaire(models.Model):
         c3_q1, c3_q2, c3_q3,
     ]
     
+   
+
+
     QUESTION_STR_TO_OBJ_MAP = dict(zip(QUESTION_STRS, QUESTION_OBJS))
     
     QUESTIONS_DETERMINING_ELIGIBILITY = [
