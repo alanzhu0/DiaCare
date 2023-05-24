@@ -194,6 +194,8 @@ CONNECTION_USE_TLS = True
 # PUT IN SECRET.PY!
 EMAIL_HOST_USER = ""  # sender's email-id
 EMAIL_HOST_PASSWORD = ""  # password associated with above email-id
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 
 # The host that the email forwarding link will use
 # No trailing slash
