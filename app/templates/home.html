@@ -8,7 +8,9 @@
 {% block css %}
     <link href="{% static 'home.css' %}" rel="stylesheet">
 {% endblock %}
-
+<a href="{% url 'downloads' %}" class="button small-button print-hide">
+    <i class="fas fa-download"></i> Download as CSV
+</a>
 
 {% block body %}
 <a href="{% url 'orders' %}" class="text-decoration-none">
