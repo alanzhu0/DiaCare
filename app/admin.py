@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.conf import settings
 from django.utils import timezone
-from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire
+from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire, EmailVerificationLink
 admin.site.site_header = "DiaCare Administration"
 
 def to_str(obj):
@@ -195,6 +195,15 @@ class ScreeningQuestionnaireAdmin(admin.ModelAdmin):
         'user',
     )
 
+
+class EmailVerificationLinkAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'email',
+        'time_created',
+        'valid'
+    )
+
 admin.site.register(User, UserAdmin)
 
 admin.site.register(Doctor, DoctorDieticianAdmin)
@@ -208,6 +217,8 @@ admin.site.register(ProduceCategory, ProduceCategoryAdmin)
 admin.site.register(Order, OrderAdmin)
 
 admin.site.register(ScreeningQuestionnaire, ScreeningQuestionnaireAdmin)
+
+admin.site.register(EmailVerificationLink, EmailVerificationLinkAdmin)
 
 if settings.DEBUG:
     admin.site.register(Food)

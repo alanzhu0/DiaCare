@@ -180,6 +180,26 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+
+### EMAIL ###
+DEFAULT_FROM_EMAIL = "support@diacare.tech"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+CONNECTION_USE_TLS = True
+
+# PUT IN SECRET.PY!
+EMAIL_HOST_USER = ""  # sender's email-id
+EMAIL_HOST_PASSWORD = ""  # password associated with above email-id
+
+# The host that the email forwarding link will use
+# No trailing slash
+MY_HOST = "https://diacare.tech"
+
+
 try:
     from .secret import *
 except ImportError:

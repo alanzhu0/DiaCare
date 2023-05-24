@@ -1,3 +1,5 @@
+import uuid
+from datetime import timedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.db import models
@@ -29,6 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ), max_length=255)
     
     
+    email_verified = models.BooleanField(default=False, help_text="Whether the user has verified their email address.")
     active = models.BooleanField(
         default=False, 
         help_text="Whether the user is currently enrolled in the Food Pharmacy program and is authorized to log in and order food.", 
@@ -303,3 +306,16 @@ class ScreeningQuestionnaire(models.Model):
     
     class Meta:
         ordering = ['-date_completed']
+
+
+class EmailVerificationLink(models.Model):
+    token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    valid = models.BooleanField(default=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def is_valid(self):
+        return self.valid and timezone.now() - timedelta(hours=24) <= self.time_created <= timezone.now()

@@ -1,4 +1,5 @@
 import logging
+from django.conf import settings
 import csv
 from django import http
 
@@ -8,47 +9,23 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import render
 from django.db.models import Q
 
+from datetime import datetime, timedelta
 
-from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire
+
+from .models import User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, EmailVerificationLink, ScreeningQuestionnaire
 from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm
 from .decorators import active_users_only
+from .helpers import send_email
 
 logger = logging.getLogger(__name__)
 
-
-def index(request):
-    if request.user.is_authenticated:
-        if request.user.active:
-            return render(request, 'home.html')
-        if request.user.eligible:
-            return render(request, 'eligible.html')
-        if not request.user.completed_screening_questionnaire:
-            return redirect(reverse('screening_questionnaire'))
-        return render(request, 'ineligible.html')
-    
-    # Login
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
-
-        user = authenticate(username=user.email, password=password)
-        if user is not None:
-            auth_login(request, user)
-            return redirect(reverse('index'))
-        return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
-
-    return render(request, 'login.html')
 
 @active_users_only
 def order_food(request):
@@ -159,7 +136,22 @@ def orders(request):
         "last_order": orders.first() if orders.exists() else None,
     })
 
+@active_users_only
+def profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully updated profile.")
+            return redirect(reverse('profile'))
+        print(form.errors)
+        return render(request, 'profile.html', {'form': form}) 
+    
+    form = ProfileForm(instance=request.user)
+    return render(request, 'profile.html', {'form': form})
 
+
+################ AUTHENTICATION ################
 
 @login_required
 def logout(request):
@@ -167,6 +159,38 @@ def logout(request):
     messages.success(request, "Successfully logged out.")
     return redirect(reverse('index'))
 
+def index(request):
+    if request.user.is_authenticated:
+        if request.user.active:
+            return render(request, 'home.html')
+        if not request.user.email_verified:
+            return redirect(reverse('verify_email'))
+        if request.user.eligible:
+            return render(request, 'eligible.html')
+        if not request.user.completed_screening_questionnaire:
+            return redirect(reverse('screening_questionnaire'))
+        return render(request, 'ineligible.html')
+    
+    # Login
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
+
+        user = authenticate(username=user.email, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect(reverse('index'))
+        return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
+
+    return render(request, 'login.html')
+
+
+################ SIGNUP ################
 
 def signup(request):
     if request.user.is_authenticated:
@@ -182,6 +206,65 @@ def signup(request):
     form = SignupForm()
     return render(request, 'signup.html', {'form': form})
 
+
+def verify_email(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "You must be logged in to verify your email address. Please login and click the verification link again.")
+        return redirect(reverse('index'))
+    
+    if request.user.email_verified:
+        return redirect(reverse('index'))
+    
+    if request.GET.get("token"):
+        try:
+            verification_link = EmailVerificationLink.objects.get(token=request.GET.get("token"), valid=True, user=request.user)
+        except EmailVerificationLink.DoesNotExist:
+            messages.error(request, "Invalid verification link.")
+            return render(request, 'verify_email.html')
+        request.user.email_verified = True
+        request.user.save()
+        verification_link.valid = False
+        verification_link.save()
+        
+        messages.success(request, "Your email address has been verified.")
+        return redirect(reverse('index'))
+    
+    if request.GET.get("resend") or not EmailVerificationLink.objects.filter(user=request.user).exists():
+        if EmailVerificationLink.objects.filter(
+            user=request.user, 
+            valid=True, 
+            time_created__gte=timezone.now()-timedelta(minutes=1)
+        ).exists():
+            messages.error(request, "Please wait a few minutes before requesting another verification email.")
+            return render(request, 'verify_email.html')
+        
+        EmailVerificationLink.objects.filter(user=request.user).delete()
+        verification_link = EmailVerificationLink.objects.create(user=request.user, email=request.user.email)
+        
+        send_email(
+            "Children's National Food Pharmacy App: Verify your email address",
+            f"""
+            Hi {request.user.first_name},
+            
+            You recently signed up for the Children's National Food Pharmacy App. If this was you, please click the link below to verify your email address:
+            {settings.MY_HOST}{reverse('verify_email')}?token={verification_link.token}
+            
+            If you did not sign up for the Food Pharmacy App, please ignore this email.
+            
+            Thank you,
+            Food Pharmacy App Team
+            Children's National Hospital
+            111 Michigan Avenue NW, Washington, DC.
+            www.childrensnational.org
+            """,
+            request.user.email,
+        )
+        
+        messages.success(request, "Sent verification email.")
+    
+    return render(request, 'verify_email.html')
+    
+    
 
 
 
@@ -242,28 +325,4 @@ def screening_questionnaire(request):
 
     form = ScreeningQuestionnaireForm()
     return render(request, 'screening_questionnaire.html', {'form': form})
-    
-    # if request.method == 'POST':
-    #     for thing in request.POST.dict().keys():
-    #         val = request.POST.dict().get(thing)
-
-    #         if val == '1':
-    #             return render(request, 'login.html', {'message': 'You are eligible for DiaCare! Please sign in with the account you created to continue.'})
-    #     request.doctors = Doctor.objects.all()
-
-    #     return render(request, 'signup.html', {'error': 'You do not qualify for the program.'})
-    # return render(request, 'questionnaire.html')
-
-@active_users_only
-def profile(request):
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Successfully updated profile.")
-            return redirect(reverse('profile'))
-        print(form.errors)
-        return render(request, 'profile.html', {'form': form}) 
-    
-    form = ProfileForm(instance=request.user)
-    return render(request, 'profile.html', {'form': form})
+    return render(request, 'screening_questionnaire.html', {'form': form})

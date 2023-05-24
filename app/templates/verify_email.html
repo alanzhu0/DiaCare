@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block nav %}{% endblock %}
+
+{% block title %}
+    DiaCare - Verify Email
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <br>
+    <h1 class="text-success">Verify Your Email</h1>
+    <hr>
+    <b>Please verify your email address to continue with the signup process.</b>
+    <br><br>
+    <p>
+        We just sent a verification email to <b>{{ request.user.email }}</b>.
+        Please check your inbox and click on the link to verify your email address. 
+        This link will expire in 24 hours.
+        <br><br>
+    </p>
+    <hr>
+    <a href="?resend=1" class="btn btn-primary">Resend Email</a>
+</div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock %}
