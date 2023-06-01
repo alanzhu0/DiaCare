@@ -1,1 +1,1 @@
-web: daphne DiaCare.asgi:application -b 0.0.0.0 -p $PORT --access-log logs/access.log 
+web: daphne DiaCare.asgi:application -b 0.0.0.0 -p $PORT
