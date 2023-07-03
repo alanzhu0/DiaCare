@@ -7,7 +7,7 @@ from .models import (
     User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, Order, ScreeningQuestionnaire, 
     EmailVerificationLink, PasswordResetLink, AccountApprovalLink
 )
-admin.site.site_header = "DiaCare Administration"
+admin.site.site_header = "Food Pharmacy App Administration"
 
 def to_str(obj):
     return str(obj)
@@ -35,8 +35,8 @@ class UserAdmin(admin.ModelAdmin):
         'gender',
         'doctor',
         'dietician',
-        'last_clinic_visit',
-        'last_food_received',
+        #'last_clinic_visit',
+        #'last_food_received',
         'active',
         eligible,
         admin,
@@ -50,8 +50,8 @@ class UserAdmin(admin.ModelAdmin):
         'gender',
         'doctor',
         'dietician',
-        'last_clinic_visit',
-        'last_food_received',
+        #'last_clinic_visit',
+        #'last_food_received',
         'active',
     )
     

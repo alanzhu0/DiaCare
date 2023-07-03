@@ -10,8 +10,15 @@ Thank you,
 Food Pharmacy App Team
 Children's National Hospital
 111 Michigan Avenue NW, Washington, DC.
-childrensnational.org
-diacare.tech
+------------------------------------------------------
+Contact us at:
+Email: help@example.com
+Phone: 111-111-1111
+------------------------------------------------------
+Visit us on the web:
+Children's National: https://childrensnational.org
+Food Pharmacy App: https://diacare.tech
+------------------------------------------------------
     """
     
     send_mail(

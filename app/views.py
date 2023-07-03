@@ -166,7 +166,12 @@ def logout(request):
 def index(request):
     if request.user.is_authenticated:
         if request.user.active:
-            return render(request, 'home.html')
+            next_order = Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True).first()
+            last_order = Order.objects.filter(user=request.user, date_fulfilled__isnull=False).order_by('-date_fulfilled').first()
+            return render(request, 'home.html', {
+                "next_food_order": next_order.date_scheduled if next_order else "No order scheduled.",
+                "last_food_received": last_order.date_fulfilled if last_order else "No food received yet.",
+            })
         if not request.user.email_verified:
             return redirect(reverse('verify_email'))
         if request.user.eligible:
@@ -288,14 +293,29 @@ def screening_questionnaire(request):
 Hello,
 
 {request.user} ({request.user.email}) has requested approval for registering an account on the Children's National Food Pharmacy App.
-You are receiving this email because the patient was identified as eligible for the Food Pharmacy Program and has specified you as their doctor or dietician.
+You are receiving this email because the patient was identified as eligible for the Food Pharmacy Program and you are a Food Pharmacy App administrator.
 
 To approve this account, click the link below:
 {settings.MY_HOST}{reverse('approve_account')}?token={approve_link.token}
 
 Please ignore this email if you do not wish to approve this account.         
                     """,
-                    [request.user.doctor.email, request.user.dietician.email] + [u.email for u in User.objects.filter(Q(is_superuser=True) | Q(is_staff=True))] + settings.ADMIN_EMAILS,
+                    [u.email for u in User.objects.filter(Q(is_superuser=True) | Q(is_staff=True))] + settings.ADMIN_EMAILS,
+                )
+                send_email(
+                    "Children's National Food Pharmacy App: You're eligible! Access pending approval",
+                    f"""\
+Hi {request.user.first_name},
+
+This is a confirmation that you were identified as eligible for the Children's National Food Pharmacy Program.
+
+Your account is currently pending approval by Children's National staff. Please contact your doctor or dietician if your request is not approved within a few days. You can also email help@example.com or call 111-111-1111 for assistance.
+
+You will receive an email when your account is approved. Once approved, you will be able to start using the Food Pharmacy App and order food. To login to the app, go to https://diacare.tech.
+
+We look forward to seeing you at the Food Pharmacy soon!
+                    """,
+                    request.user.email,
                 )
                 
             return redirect(reverse('index'))  # Should go to eligible or ineligible. Redirect to index to make sure logic is good.
@@ -325,9 +345,9 @@ def approve_account(request):
 Hi {approval_link.user.first_name},
 
 Your account for the Children's National Food Pharmacy App has been approved. 
-You can now login to the app at diacare.tech using your email address and the password you created when you signed up and begin using the app to place food orders.
+You can now login to the app at https://diacare.tech using your email address and the password you created when you signed up and begin using the app to place food orders.
 
-If you have any questions, please contact your doctor or dietician. We look forward to seeing you at the Food Pharmacy!
+If you have any questions, please contact your doctor or dietician. You can also email help@example.com or call 111-111-1111 for assistance. We look forward to seeing you at the Food Pharmacy!
                 """,
                 approval_link.user.email,
             )

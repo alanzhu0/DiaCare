@@ -10,7 +10,7 @@
     border-radius: 5px;
 }
 
-.produce-container, .produce-category-container, select {
+.produce-container, .produce-category-container, select.form-control {
     background-color: rgb(191, 255, 191) !important;
     border: 0px solid black !important;
 }
@@ -20,7 +20,7 @@
     border-radius: 5px;
 }
 
-select {
+select.form-control {
     background-color: rgb(128, 237, 128) !important;
     z-index: 1;
     overflow: hidden;

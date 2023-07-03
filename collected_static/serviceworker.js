@@ -1,4 +1,4 @@
-var staticCacheName = 'DiaCare-v3';
+var staticCacheName = 'Food Pharmacy App-v3';
 
 self.addEventListener('install', function(event) {
 

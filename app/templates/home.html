@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    DiaCare - Home
+    Food Pharmacy App - Home
 {% endblock %}
 
 {% block css %}
@@ -57,18 +57,18 @@
             </a>
         </td>
     </tr>
-    <tr>
+    {% comment %} <tr>
         <td>
             <b>Last clinic visit:</b>
             <br>
             {{ request.user.last_clinic_visit }}
         </td>
-    </tr>
+    </tr> {% endcomment %}
     <tr>
         <td>
             <b>Last food received:</b> 
             <br>
-            {{ request.user.last_food_received }}
+            {{ last_food_received }}
         </td>
     </tr>
 
@@ -79,7 +79,7 @@
             Scheduled Visits
         </td>
     </tr>
-    <tr>
+    {% comment %} <tr>
         <td>
             <b>Next clinic visit:</b>
             <br>
@@ -89,16 +89,16 @@
                 Schedule
             </a>
         </td>
-    </tr>
+    </tr> {% endcomment %}
     <tr>
         <td>
-            <b>Next food batch:</b> 
+            <b>Next food order:</b> 
             <br>
-            {{ request.user.next_food_batch }}
-            <a href="" class="right-link">
+            {{ next_food_order }}
+            {% comment %} <a href="" class="right-link">
                 <i class="fa-solid fa-clock"></i>
                 Schedule
-            </a>
+            </a> {% endcomment %}
         </td>
     </tr>
     {% comment %}

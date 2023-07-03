@@ -5,8 +5,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static', 'serviceworker.js')
-PWA_APP_NAME = 'DiaCare'
-PWA_APP_DESCRIPTION = "Children's National Hospital DiaCare Food Program"
+PWA_APP_NAME = 'Food Pharmacy App'
+PWA_APP_DESCRIPTION = "Children's National Hospital Food Pharmacy Program"
 PWA_APP_THEME_COLOR = '#000000'
 PWA_APP_BACKGROUND_COLOR = '#ffffff'
 PWA_APP_DISPLAY = 'standalone'

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    DiaCare - Orders
+    Food Pharmacy App - Orders
 {% endblock %}
 
 {% block css %}
@@ -14,10 +14,10 @@
 {% if has_open_order %}
 <div class="banner-center open-order d-flex justify-content-center align-items-center">
     <div>
-        You currently have an open order.
+        You have an open order.
         <br>
         <p class="small-desc">
-            Your next order (Order #{{ last_order.number }}) is scheduled for {{ last_order.date_scheduled }}
+            Your next order (Order #{{ last_order.number }}) is scheduled for <b>{{ last_order.date_scheduled }}</b>
             You can edit it or cancel it below.
         </p>  
     </div>

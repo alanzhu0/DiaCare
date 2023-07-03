@@ -7,15 +7,15 @@
 {% endblock %}
 
 {% block title %}
-  Diacare - Signup
+  Food Pharmacy App - Signup
 {% endblock %}
 
 {% block body %}
 {% block nav %}{% endblock %}
 <div class="container">
   <br>
-  <img class="mb-4 logo" height="100" src="{% static 'images/logo_transparent.png' %}" alt="Diacare Logo">
-  <h1>Sign up for DiaCare</h1>
+  <img class="mb-4 logo" height="100" src="{% static 'images/logo_transparent.png' %}" alt="Food Pharmacy App Logo">
+  <h1>Sign up for Food Pharmacy App</h1>
   
   <div>
     <b>Already have an account?</b>
@@ -49,6 +49,8 @@
       </ol>
     <hr>
   </div>
+
+  <i>* indicates required field</i>
   
   {% crispy form %}
 

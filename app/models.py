@@ -39,17 +39,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     address = models.CharField(max_length=512)
 
-    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE)
-    dietician = models.ForeignKey('Dietician', on_delete=models.CASCADE)
+    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, blank=True, null=True)
+    dietician = models.ForeignKey('Dietician', on_delete=models.CASCADE, blank=True, null=True)
 
-    last_clinic_visit = models.DateTimeField(blank=True, null=True)
-    last_food_received = models.DateTimeField(blank=True, null=True)
-    next_clinic_visit = models.DateTimeField(blank=True, null=True)
-    next_food_batch = models.DateTimeField(blank=True, null=True)
+    #last_clinic_visit = models.DateTimeField(blank=True, null=True)
+    #last_food_received = models.DateTimeField(blank=True, null=True)
+    #next_clinic_visit = models.DateTimeField(blank=True, null=True)
+    #next_food_batch = models.DateTimeField(blank=True, null=True)
     
     patient_comments = models.TextField(blank=True, help_text="Comments from the patient")
     medical_comments = models.TextField(blank=True, help_text="Comments from the doctor, dietician, or clinic regarding the patient's medical conditions. Not visible to patient.")
-    admin_comments = models.TextField(blank=True, help_text="Comments from DiaCare administrators. Not visible to patient.")
+    admin_comments = models.TextField(blank=True, help_text="Comments from Food Pharmacy App administrators. Not visible to patient.")
 
 
     @property
