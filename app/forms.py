@@ -146,7 +146,7 @@ class ProfileForm(forms.ModelForm):
                 Field('email'),
                 HTML(
                     """
-                    <a href="" class="btn btn-primary" style="margin-bottom: 10px">
+                    <a href="{% url 'change_password' %}" class="btn btn-primary" style="margin-bottom: 10px">
                         <i class="fas fa-key"></i>&nbsp;
                         Change Password
                     </a>
@@ -189,4 +189,61 @@ class ProfileForm(forms.ModelForm):
             'doctor',
             'dietician',
             'patient_comments'
+        ]
+
+class PasswordChangeForm(forms.ModelForm):
+    old_password = forms.CharField(widget=forms.PasswordInput)
+    new_password1 = forms.CharField(widget=forms.PasswordInput, label='New Password')
+    new_password2 = forms.CharField(widget=forms.PasswordInput, label='Confirm New Password')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = kwargs['instance']
+        self.helper = FormHelper()    
+        self.helper.form_class = 'needs-validation'
+        self.helper.attrs = {'novalidate': ''}
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Row(
+                'old_password',
+            ),
+            Row(
+                Column('new_password1'),
+                Column('new_password2'),
+            ),
+            Submit('submit', 'Change Password')
+        )
+    
+    def clean_new_password2(self):
+        new_password1 = self.cleaned_data['new_password1']
+        new_password2 = self.cleaned_data['new_password2']
+        
+        if new_password1 != new_password2:
+            raise forms.ValidationError('New passwords do not match.')
+        
+        if new_password1 == self.cleaned_data['old_password']:
+            raise forms.ValidationError('New password cannot be the same as old password.')
+        
+        try:
+            validate_password(new_password1)
+        except forms.ValidationError as error:
+            self.add_error('new_password1', error) 
+        return make_password(new_password1)
+    
+    def clean_old_password(self):
+        old_password = self.cleaned_data['old_password']
+        if not self.user.check_password(old_password):
+            raise forms.ValidationError('Old password is incorrect.')
+        return old_password
+    
+    def save(self):
+        self.user.set_password(self.cleaned_data['new_password1'])
+        self.user.save()
+    
+    class Meta:
+        model = User
+        fields = [
+            'old_password',
+            'new_password1',
+            'new_password2',
         ]

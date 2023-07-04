@@ -16,6 +16,11 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('signup/verify-email', views.verify_email, name='verify_email'),
     path('signup/screening-questionnaire', views.screening_questionnaire, name='screening_questionnaire'),
+    
+    # Accounts
+    path('password/change/', views.change_password, name='change_password'),
+    path('password/reset/', views.reset_password, name='reset_password'),
+    
     # Approval process
     path('signup/approve', views.approve_account, name='approve_account'),
     

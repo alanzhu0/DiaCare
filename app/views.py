@@ -24,12 +24,13 @@ from .models import (
     User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, ScreeningQuestionnaire,
     Order, EmailVerificationLink, AccountApprovalLink, PasswordResetLink,
 )
-from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm
+from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm, PasswordChangeForm
 from .decorators import active_users_only, admin_only
 from .helpers import send_email
 
 logger = logging.getLogger(__name__)
 
+################ FOOD ################
 
 @active_users_only
 def order_food(request):
@@ -140,6 +141,9 @@ def orders(request):
         "last_order": orders.first() if orders.exists() else None,
     })
 
+
+################ PROFILE ################
+
 @active_users_only
 def profile(request):
     if request.method == 'POST':
@@ -153,6 +157,25 @@ def profile(request):
     
     form = ProfileForm(instance=request.user)
     return render(request, 'profile.html', {'form': form})
+
+@active_users_only
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            user = request.user
+            form.save()
+            messages.success(request, "Successfully changed password. Please login again to continue.")
+            return redirect(reverse('index') + f"?email={user.email}")
+        print(form.errors)
+        return render(request, 'password-change.html', {'form': form})
+    form = PasswordChangeForm(instance=request.user)
+    return render(request, 'password-change.html', {'form': form})
+
+    
+@active_users_only
+def reset_password(request):
+    pass
 
 
 ################ AUTHENTICATION ################
@@ -188,13 +211,13 @@ def index(request):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
+            return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.', 'email': email})
 
         user = authenticate(username=user.email, password=password)
         if user is not None:
             auth_login(request, user)
             return redirect(reverse('index'))
-        return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.'})
+        return render(request, 'login.html', {'error': 'The credentials you entered were incorrect. Please try again.', 'email': email})
 
     return render(request, 'login.html')
 
