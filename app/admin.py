@@ -248,7 +248,7 @@ admin.site.register(ScreeningQuestionnaire, ScreeningQuestionnaireAdmin)
 
 admin.site.register(EmailVerificationLink, EmailVerificationLinkAdmin)
 
-admin.site.register(PasswordResetLink, SecureLinkAdmin)
+admin.site.register(PasswordResetLink, EmailVerificationLinkAdmin)
 
 admin.site.register(AccountApprovalLink, SecureLinkAdmin)
 

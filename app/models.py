@@ -337,7 +337,7 @@ class SecureLink(models.Model):
 class EmailVerificationLink(SecureLink):
     email = models.EmailField()
     
-class PasswordResetLink(SecureLink):
+class PasswordResetLink(EmailVerificationLink):
     hours_valid = 1
 
 class AccountApprovalLink(SecureLink):

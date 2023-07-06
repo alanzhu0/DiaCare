@@ -24,7 +24,7 @@ from .models import (
     User, Food, Produce, FoodChoice, ProduceChoice, ProduceCategory, Doctor, Dietician, ScreeningQuestionnaire,
     Order, EmailVerificationLink, AccountApprovalLink, PasswordResetLink,
 )
-from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm, PasswordChangeForm
+from .forms import SignupForm, ScreeningQuestionnaireForm, ProfileForm, PasswordResetForm, PasswordChangeForm
 from .decorators import active_users_only, admin_only
 from .helpers import send_email
 
@@ -173,9 +173,72 @@ def change_password(request):
     return render(request, 'password-change.html', {'form': form})
 
     
-@active_users_only
 def reset_password(request):
-    pass
+    if request.user.is_authenticated:
+        return redirect(reverse('index'))
+    
+    if request.method == 'POST':
+        try:
+            reset_link = PasswordResetLink.objects.get(token=request.GET.get("token"))
+        except (PasswordResetLink.DoesNotExist, ValidationError):
+            messages.error(request, "Invalid password reset link.")
+            return render(request, 'password-reset-enter-email.html')
+        
+        form = PasswordResetForm(request.POST, instance=reset_link.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully reset password. Please login again to continue.")
+            
+            PasswordResetLink.objects.filter(user=reset_link.user).delete()
+            
+            return redirect(reverse('index') + f"?email={reset_link.user.email}")
+        print(form.errors)
+        return render(request, 'password-reset.html', {
+            'user': reset_link.user,
+            'token': reset_link.token,
+            'form': form
+        })
+    
+    if request.GET.get("token"):
+        try:
+            reset_link = PasswordResetLink.objects.get(token=request.GET.get("token"))
+        except (PasswordResetLink.DoesNotExist, ValidationError):
+            messages.error(request, "Invalid password reset link.")
+            return render(request, 'password-reset-enter-email.html')
+        
+        if not reset_link.is_valid:
+            messages.error(request, "Invalid password reset link.")
+            return render(request, 'password-reset-enter-email.html')
+        
+        form = PasswordResetForm(instance=reset_link.user)
+        return render(request, 'password-reset.html', {
+            'user': reset_link.user, 
+            'token': reset_link.token,
+            'form': form,
+        })
+    
+    if request.method == 'GET' and request.GET.get('email'):
+        email = request.GET.get('email')
+        try:
+            user = User.objects.get(email=email)
+            reset_link = PasswordResetLink.objects.create(user=user, email=email)
+            send_email(
+                "Children's National Food Pharmacy App: Reset password",
+                f"""\
+Hi {user.first_name},
+
+You recently requested a password reset on the Children's National Food Pharmacy App. If this was you, please click the link below to reset your password:
+{settings.MY_HOST}{reverse('reset_password')}?token={reset_link.token}
+
+Please contact us at help@example.com if you did not request a password reset.
+            """,
+                email,
+            )
+        except User.DoesNotExist:
+            pass
+        messages.success(request, "Password reset link sent.")
+        return render(request, 'password-reset-check-email.html', {'email': email})
+    return render(request, 'password-reset-enter-email.html')
 
 
 ################ AUTHENTICATION ################

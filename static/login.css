@@ -75,11 +75,21 @@ footer {
   width: 100%;
 }
 
+.forgot-password {
+  float: right;
+}
+
 @media(max-width: 768px) {
   html, body {
     background-image: url("/static/images/login_background_mobile.png");
   }
+
   footer {
     top: 844px;
+  }
+
+  .forgot-password {
+    float: none;
+    margin-top: 10px;
   }
 }

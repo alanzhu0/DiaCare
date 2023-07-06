@@ -191,8 +191,7 @@ class ProfileForm(forms.ModelForm):
             'patient_comments'
         ]
 
-class PasswordChangeForm(forms.ModelForm):
-    old_password = forms.CharField(widget=forms.PasswordInput)
+class PasswordResetForm(forms.ModelForm):
     new_password1 = forms.CharField(widget=forms.PasswordInput, label='New Password')
     new_password2 = forms.CharField(widget=forms.PasswordInput, label='Confirm New Password')
     
@@ -203,6 +202,43 @@ class PasswordChangeForm(forms.ModelForm):
         self.helper.form_class = 'needs-validation'
         self.helper.attrs = {'novalidate': ''}
         self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Row(
+                Column('new_password1'),
+                Column('new_password2'),
+            ),
+            Submit('submit', 'Reset Password')
+        )
+    
+    def clean_new_password2(self):
+        new_password1 = self.cleaned_data['new_password1']
+        new_password2 = self.cleaned_data['new_password2']
+        
+        if new_password1 != new_password2:
+            raise forms.ValidationError('New passwords do not match.')
+                
+        try:
+            validate_password(new_password1)
+        except forms.ValidationError as error:
+            self.add_error('new_password1', error) 
+        return make_password(new_password1)
+    
+    
+    def save(self):
+        self.user.set_password(self.cleaned_data['new_password1'])
+        self.user.save()
+    
+    class Meta:
+        model = User
+        fields = [
+            'new_password1',
+            'new_password2',
+        ]
+class PasswordChangeForm(PasswordResetForm):
+    old_password = forms.CharField(widget=forms.PasswordInput)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
             Row(
                 'old_password',
