@@ -100,8 +100,11 @@ def order_food(request):
         })
 
     if Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True).exists():
-        messages.error(request, "You cannot place an order at this time because you already have an open order.")
-        return redirect(reverse("orders"))
+        for order in Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True):
+            if order.date_ordered > timezone.now() - timedelta(days=31):
+                logger.error(f"User {order} has an open order that is more than 31 days old.")
+                messages.error(request, "You cannot place an order at this time because you already have an open order.")
+                return redirect(reverse("orders"))
     
     return render(request, 'order-food.html', {
         "foods": FoodChoice.objects.filter(active=True),
@@ -134,10 +137,15 @@ def cancel_order(request):
 
 @active_users_only
 def orders(request):
+    can_order = True
+    if Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True).exists():
+        for order in Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True):
+            if order.date_ordered > timezone.now() - timedelta(days=31):
+                can_order = False
     orders = Order.objects.filter(user=request.user).order_by('-number')
     return render(request, 'orders.html', {
         "orders": orders,
-        "has_open_order": orders.filter(date_fulfilled__isnull=True, date_cancelled__isnull=True).exists(),
+        "can_order": can_order,
         "last_order": orders.first() if orders.exists() else None,
     })
 
