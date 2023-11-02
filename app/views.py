@@ -138,14 +138,19 @@ def cancel_order(request):
 @active_users_only
 def orders(request):
     can_order = True
-    if Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True).exists():
-        for order in Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True):
-            if order.date_ordered > timezone.now() - timedelta(days=31):
-                can_order = False
+    show_survey = False
+    for order in Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True):
+        if order.date_ordered > timezone.now() - timedelta(days=31):
+            can_order = False
     orders = Order.objects.filter(user=request.user).order_by('-number')
+    ordertimes = Order.objects.filter(user=request.user, date_fulfilled__isnull=False, date_cancelled__isnull=True)
+    for order in ordertimes:
+        if order.date_fulfilled > timezone.now() - timedelta(days=14):
+            show_survey = True
     return render(request, 'orders.html', {
         "orders": orders,
         "can_order": can_order,
+        "show_survey": show_survey,
         "last_order": orders.first() if orders.exists() else None,
     })
 

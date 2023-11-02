@@ -56,6 +56,13 @@ h5 {
     padding-top: 10px;
 }
 
+.survey-order {
+    cursor: auto;
+    background-color: rgb(245, 100, 100);
+    height: auto;
+    padding-top: 10px;
+}
+
 .card-header {
     height: 85px;
 }

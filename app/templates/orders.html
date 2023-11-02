@@ -31,6 +31,20 @@
 </a> 
 {% endif %}
 
+{% if show_survey %}
+<div class="banner-center survey-order d-flex justify-content-center align-items-center">
+    <div>
+        Share your feedback with us to improve the experience and provide input for future foods!
+        <br>
+        <p class="small-desc">
+            Please click <a href="https://app.keysurvey.com/f/41632971/5621/%20%5Bapp.keysurvey.com%5D">here</a> to access the survey.
+        </p>  
+    </div>
+</div>
+
+{% endif %}
+
+
 {% for order in orders %}
     <div class="card">
         <div class="card-header">
