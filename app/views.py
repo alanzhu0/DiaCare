@@ -18,6 +18,7 @@ from django.shortcuts import render
 from django.db.models import Q
 
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 from .models import (
@@ -100,8 +101,11 @@ def order_food(request):
         })
 
     if Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True).exists():
-        messages.error(request, "You cannot place an order at this time because you already have an open order.")
-        return redirect(reverse("orders"))
+        for order in Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True):
+            if order.date_ordered > timezone.now() - timedelta(days=31):
+                logger.error(f"User {order} has an open order that is more than 31 days old.")
+                messages.error(request, "You cannot place an order at this time because you already have an open order.")
+                return redirect(reverse("orders"))
     
     return render(request, 'order-food.html', {
         "foods": FoodChoice.objects.filter(active=True),
@@ -134,10 +138,20 @@ def cancel_order(request):
 
 @active_users_only
 def orders(request):
+    can_order = True
+    show_survey = False
+    for order in Order.objects.filter(user=request.user, date_fulfilled__isnull=True, date_cancelled__isnull=True):
+        if order.date_ordered > timezone.now() - timedelta(days=31):
+            can_order = False
     orders = Order.objects.filter(user=request.user).order_by('-number')
+    ordertimes = Order.objects.filter(user=request.user, date_fulfilled__isnull=False, date_cancelled__isnull=True)
+    for order in ordertimes:
+        if order.date_fulfilled > timezone.now() - timedelta(days=14):
+            show_survey = True
     return render(request, 'orders.html', {
         "orders": orders,
-        "has_open_order": orders.filter(date_fulfilled__isnull=True, date_cancelled__isnull=True).exists(),
+        "can_order": can_order,
+        "show_survey": show_survey,
         "last_order": orders.first() if orders.exists() else None,
     })
 
@@ -256,6 +270,7 @@ def index(request):
             last_order = Order.objects.filter(user=request.user, date_fulfilled__isnull=False).order_by('-date_fulfilled').first()
             return render(request, 'home.html', {
                 "next_food_order": next_order.date_scheduled if next_order else "No order scheduled.",
+                "time_till_next_order": (next_order.date_scheduled + relativedelta(months=1) ) if ((next_order.date_scheduled + relativedelta(months=1)) > timezone.now()) else "No order scheduled.",
                 "last_food_received": last_order.date_fulfilled if last_order else "No food received yet.",
             })
         if not request.user.email_verified:
