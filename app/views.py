@@ -18,6 +18,7 @@ from django.shortcuts import render
 from django.db.models import Q
 
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 from .models import (
@@ -269,6 +270,7 @@ def index(request):
             last_order = Order.objects.filter(user=request.user, date_fulfilled__isnull=False).order_by('-date_fulfilled').first()
             return render(request, 'home.html', {
                 "next_food_order": next_order.date_scheduled if next_order else "No order scheduled.",
+                "time_till_next_order": (next_order.date_scheduled + relativedelta(months=1) ) if ((next_order.date_scheduled + relativedelta(months=1)) > timezone.now()) else "No order scheduled.",
                 "last_food_received": last_order.date_fulfilled if last_order else "No food received yet.",
             })
         if not request.user.email_verified:
