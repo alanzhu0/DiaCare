@@ -172,11 +172,11 @@
                             selected
                         {% endif %}
                     >Pickup</option>
-                    <option value="delivery"
+                    {% comment %} <option value="delivery"
                         {% if order and order.type == "delivery" %}
                             selected
                         {% endif %}
-                    >Delivery</option>
+                    >Delivery</option> {% endcomment %}
                 </select>
             </div>
         </div>

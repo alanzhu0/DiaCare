@@ -94,7 +94,7 @@ class SignupForm(forms.ModelForm):
             ),
             Fieldset(
                 'Medical Information',
-                HTML("This section is optional. Fill out this section if there is a doctor or dietician you regularly see.<br><br>"),
+                HTML("This section is <b>optional</b>. Fill out this section if there is a doctor or dietician you regularly see.<br><br>"),
                 Row(
                     Column('doctor'),
                     Column('dietician'),

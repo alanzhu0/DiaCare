@@ -195,7 +195,7 @@ class Order(models.Model):
     date_cancelled = models.DateTimeField(blank=True, null=True)
     type = models.CharField(choices=(
         ("pickup", "Pickup"),
-        ("delivery", "Delivery"),
+        # ("delivery", "Delivery"),
     ), max_length=255, default="Pickup")
     patient_comments = models.TextField(blank=True, help_text="Comments from the patient regarding this order")
     admin_comments = models.TextField(blank=True, help_text="Comments from food pharmacy staff regarding this order. Not visible to patient.")
