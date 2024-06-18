@@ -246,13 +246,10 @@ admin.site.register(Order, OrderAdmin)
 
 admin.site.register(ScreeningQuestionnaire, ScreeningQuestionnaireAdmin)
 
-admin.site.register(EmailVerificationLink, EmailVerificationLinkAdmin)
-
-admin.site.register(PasswordResetLink, EmailVerificationLinkAdmin)
-
-admin.site.register(AccountApprovalLink, SecureLinkAdmin)
 
 if settings.DEBUG:
     admin.site.register(Food)
     admin.site.register(Produce)
-
+    admin.site.register(EmailVerificationLink, EmailVerificationLinkAdmin)
+    admin.site.register(PasswordResetLink, EmailVerificationLinkAdmin)
+    admin.site.register(AccountApprovalLink, SecureLinkAdmin)
