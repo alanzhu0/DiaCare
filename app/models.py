@@ -196,7 +196,7 @@ class Order(models.Model):
     type = models.CharField(choices=(
         ("pickup", "Pickup"),
         # ("delivery", "Delivery"),
-    ), max_length=255, default="Pickup")
+    ), max_length=255, default="Pickup", null=True, blank=True)
     patient_comments = models.TextField(blank=True, help_text="Comments from the patient regarding this order")
     admin_comments = models.TextField(blank=True, help_text="Comments from food pharmacy staff regarding this order. Not visible to patient.")
     number = models.IntegerField(default=0, help_text="Order number, incremented individually for each user")
