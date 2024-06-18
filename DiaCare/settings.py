@@ -199,7 +199,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 
 # The host that the email forwarding link will use
 # No trailing slash
-MY_HOST = "https://diacare.tech"
+MY_HOST = "https://d-le8p.onrender.com"
 
 ADMIN_EMAILS = [
     "support@diacare.tech"
